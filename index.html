@@ -612,89 +612,119 @@ function genGrade5Chinese(level) {
   return getBatch(pool, level, QUESTIONS_PER_LEVEL);
 }
 
-// -------- 五年级 数学 --------
+// -------- 五年级 数学（应用题）--------
 function genGrade5Math(level) {
   const qs = [];
   for (let i = 0; i < QUESTIONS_PER_LEVEL; i++) {
     let q, opts, answer, ansIdx, expl;
     if (level <= 5) {
-      // 小数加减乘除
-      const op = ['+','-','×','÷'][rand(0,3)];
-      let a, b;
-      if (op === '+') {
-        a = parseFloat((rand(10, 99)).toFixed(1)); b = parseFloat((rand(10, 99)).toFixed(1));
-        answer = parseFloat((a + b).toFixed(1)); q = `${a} + ${b} = ?`;
-        expl = `${a} + ${b} = ${answer}`;
-      } else if (op === '-') {
-        a = parseFloat((rand(20, 99)).toFixed(1)); b = parseFloat((rand(10, a-1)).toFixed(1));
-        answer = parseFloat((a - b).toFixed(1)); q = `${a} - ${b} = ?`;
-        expl = `${a} - ${b} = ${answer}`;
-      } else if (op === '×') {
-        a = parseFloat((rand(1, 20)/10).toFixed(1)); b = rand(2, 9);
-        answer = parseFloat((a * b).toFixed(2)); q = `${a} × ${b} = ?`;
-        expl = `${a} × ${b} = ${answer}`;
+      // ★ 小数应用题
+      const scenario = rand(0, 5);
+      if (scenario === 0) {
+        const p1 = parseFloat((rand(10, 99)/10).toFixed(1));
+        const p2 = parseFloat((rand(10, 99 - p1*10)/10).toFixed(1));
+        answer = parseFloat((p1 + p2).toFixed(1));
+        q = `小明买文具花了 ${p1} 元，买书花了 ${p2} 元，一共花了多少元？`;
+        expl = `${p1} + ${p2} = ${answer} 元`;
+      } else if (scenario === 1) {
+        const total = parseFloat((rand(30, 99)/10).toFixed(1));
+        const spent = parseFloat((rand(10, total*10-1)/10).toFixed(1));
+        answer = parseFloat((total - spent).toFixed(1));
+        q = `小红有 ${total} 元，买文具用了 ${spent} 元，还剩多少元？`;
+        expl = `${total} - ${spent} = ${answer} 元`;
+      } else if (scenario === 2) {
+        const unit = parseFloat((rand(5, 30)/10).toFixed(1));
+        const n = rand(2, 6);
+        answer = parseFloat((unit * n).toFixed(2));
+        q = `一支笔 ${unit} 元，买了 ${n} 支，一共需要多少元？`;
+        expl = `${unit} × ${n} = ${answer} 元`;
+      } else if (scenario === 3) {
+        const total = rand(20, 99);
+        const n = rand(2, 6);
+        answer = parseFloat((total / n).toFixed(2));
+        q = `${total} 本书平均分给 ${n} 个同学，每人分几本？`;
+        expl = `${total} ÷ ${n} = ${answer}`;
+      } else if (scenario === 4) {
+        const len1 = parseFloat((rand(10, 50)/10).toFixed(1));
+        const len2 = parseFloat((rand(10, 50)/10).toFixed(1));
+        answer = parseFloat((len1 + len2).toFixed(1));
+        q = `一根绳子 ${len1} 米，另一根绳子 ${len2} 米，接起来一共多少米？`;
+        expl = `${len1} + ${len2} = ${answer} 米`;
       } else {
-        a = rand(10, 99); b = rand(2, 9);
-        answer = parseFloat((a / b).toFixed(2)); q = `${a} ÷ ${b} ≈ ?（保留两位小数）`;
-        expl = `${a} ÷ ${b} ≈ ${answer}`;
+        const weight = parseFloat((rand(20, 99)/10).toFixed(1));
+        const price = parseFloat((rand(5, 20)/10).toFixed(1));
+        answer = parseFloat((weight * price).toFixed(2));
+        q = `苹果每千克 ${price} 元，买了 ${weight} 千克，需要付多少元？`;
+        expl = `${weight} × ${price} = ${answer} 元`;
       }
       const gen = generateOptions(answer);
       opts = gen.opts; ansIdx = gen.ansIdx;
     } else if (level <= 10) {
-      // 分数加减法
+      // ★ 分数应用题
+      const d = rand(6, 12);
+      const n1 = rand(1, d-1);
+      const n2 = rand(1, d - n1);
       const op = ['+','-'][rand(0,1)];
-      const d = rand(2, 9);
-      let n1, n2;
+      const things = ['蛋糕','巧克力','西瓜','披萨','苹果派','巧克力棒'];
+      const thing = things[rand(0, things.length-1)];
       if (op === '+') {
-        n1 = rand(1, d-1); n2 = rand(1, d-1);
-        const rn = n1 + n2; const rd = d;
-        const g = gcd(rn, rd);
-        answer = `${rn/g}/${rd/g}`;
-        q = `${n1}/${d} + ${n2}/${d} = ?`;
-        expl = `${n1}/${d} + ${n2}/${d} = ${rn}/${rd} ≈ ${(rn/rd).toFixed(2)}`;
+        const rn = n1 + n2;
+        const g = gcd(rn, d);
+        answer = `${rn/g}/${d/g}`;
+        q = `妈妈把一个${thing}切成 ${d} 块，小明吃了 ${n1} 块，妹妹吃了 ${n2} 块，两人一共吃了这个${thing}的几分之几？`;
+        expl = `${n1}/${d} + ${n2}/${d} = ${rn}/${d}`;
+        if (rn/g !== rn) expl += ` = ${answer}（约分后）`;
       } else {
-        n1 = rand(2, d-1); n2 = rand(1, n1);
-        const rn = n1 - n2;
-        if (rn === 0) { n1 = rand(3, d-1); n2 = rand(1, n1-1); }
-        const rn2 = n1 - n2; const g2 = gcd(rn2, d);
-        answer = `${rn2/g2}/${d/g2}`;
-        q = `${n1}/${d} - ${n2}/${d} = ?`;
-        expl = `${n1}/${d} - ${n2}/${d} = ${rn2}/${d} ≈ ${(rn2/d).toFixed(2)}`;
+        const n1b = rand(2, d-1); const n2b = rand(1, n1b-1);
+        const rn = n1b - n2b;
+        const g = gcd(rn, d);
+        answer = `${rn/g}/${d/g}`;
+        q = `一个${thing}切成 ${d} 块，小明吃了 ${n1b} 块，小红吃了 ${n2b} 块，小明比小红多吃了几分之几？`;
+        expl = `${n1b}/${d} - ${n2b}/${d} = ${rn}/${d}`;
+        if (rn/g !== rn) expl += ` = ${answer}（约分后）`;
       }
       const gen = generateOptions(answer);
       opts = gen.opts; ansIdx = gen.ansIdx;
     } else if (level <= 15) {
-      // 简易方程
-      const x = rand(2, 15);
-      const coef = rand(2, 6);
-      const c2 = rand(1, 15);
-      if (i % 2 === 0) {
-        const result = coef * x + c2;
-        q = `解方程：${coef}x + ${c2} = ${result}，x = ?`;
-        answer = x;
-        expl = `${coef}x = ${result} - ${c2} = ${result-c2}，x = ${answer}`;
-      } else {
-        const result = coef * x - c2;
-        q = `解方程：${coef}x - ${c2} = ${result}，x = ?`;
-        answer = x;
-        expl = `${coef}x = ${result} + ${c2} = ${result+c2}，x = ${answer}`;
-      }
-      const gen = generateOptions(answer);
-      opts = gen.opts; ansIdx = gen.ansIdx;
+      // ★ 方程应用题
+      const x = rand(2, 12);
+      const coef = rand(2, 5);
+      const c2 = rand(2, 15);
+      const result = coef * x + c2;
+      const things = ['钢笔','苹果','糖果','弹珠','贴纸','笔记本'];
+      const prices = [2, 3, 5, 8];
+      const thing = things[rand(0, things.length-1)];
+      const price = prices[rand(0, prices.length-1)];
+      q = `小明买了 ${coef} 支${thing}，每支 ${price} 元，给了收银员 100 元，找回多少元？`;
+      answer = 100 - coef * price;
+      expl = `${coef} × ${price} = ${coef*price}，100 - ${coef*price} = ${answer}`;
+      // 不需要generateOptions(answer)作为顶级变量
+      const genR = generateOptions(answer);
+      opts = genR.opts; ansIdx = genR.ansIdx;
     } else {
-      // 多边形面积
-      if (i < 3) {
+      // ★ 面积应用题
+      const shapes = ['三角形','平行四边形','梯形'];
+      const shape = shapes[rand(0, shapes.length-1)];
+      if (shape === '三角形') {
         const base = rand(4, 12); const height = rand(3, 10);
-        const area = 0.5 * base * height;
-        q = `三角形底 = ${base}，高 = ${height}，面积 = ?`;
+        const area = Math.round(0.5 * base * height * 10) / 10;
+        q = `一块三角形菜地，底 ${base} 米，高 ${height} 米，面积是多少平方米？`;
         answer = area;
-        expl = `面积 = 底 × 高 ÷ 2 = ${base} × ${height} ÷ 2 = ${area}`;
-      } else {
+        expl = `面积 = 底 × 高 ÷ 2 = ${base} × ${height} ÷ 2 = ${area} 平方米`;
+      } else if (shape === '平行四边形') {
         const base = rand(4, 12); const height = rand(3, 10);
         const area = base * height;
-        q = `平行四边形底 = ${base}，高 = ${height}，面积 = ?`;
+        q = `一块平行四边形花坛，底 ${base} 米，高 ${height} 米，面积是多少平方米？`;
         answer = area;
-        expl = `面积 = 底 × 高 = ${base} × ${height} = ${area}`;
+        expl = `面积 = 底 × 高 = ${base} × ${height} = ${area} 平方米`;
+      } else {
+        // 梯形（简化：上底+下底视为已知）
+        const base1 = rand(3, 6); const base2 = rand(base1+1, 12);
+        const height = rand(3, 10);
+        const area = Math.round((base1 + base2) * height / 2 * 10) / 10;
+        q = `一块梯形苗圃，上底 ${base1} 米，下底 ${base2} 米，高 ${height} 米，面积是多少平方米？`;
+        answer = area;
+        expl = `面积 = (上底+下底) × 高 ÷ 2 = (${base1}+${base2}) × ${height} ÷ 2 = ${area} 平方米`;
       }
       const gen = generateOptions(answer);
       opts = gen.opts; ansIdx = gen.ansIdx;
