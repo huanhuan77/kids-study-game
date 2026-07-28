@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>📚 闯关复习大作战</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: linear-gradient(180deg, #B8E986 0%, #D4F5A0 50%, #C9F088 100%);
+    min-height: 100vh;
+    overflow: hidden;
+    user-select: none;
+    color: #333;
+  }
+
+  /* App Container */
+  .app { position: relative; z-index: 1; width: 100%; max-width: 480px; margin: 0 auto; height: 100vh; height: 100dvh; overflow: hidden; display: flex; flex-direction: column; }
+
+  /* Screen Base */
+  .screen {
+    display: none;
+    flex-direction: column;
+    height: 100%;
+    padding: 20px 18px 20px;
+    animation: fadeIn .35s ease;
+  }
+  .screen.active { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Common */
+  .icon-btn {
+    background: transparent; border: none; cursor: pointer;
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; color: #555; transition: .2s;
+  }
+  .icon-btn:active { transform: scale(.9); background: rgba(0,0,0,.05); }
+
+  /* ============ Screen: Grade Select ============ */
+  .screen-grade { justify-content: space-between; padding-top: 60px; padding-bottom: 40px; }
+  .grade-title {
+    text-align: center; color: #fff; padding: 12px 0 30px;
+    text-shadow: 0 2px 8px rgba(0,0,0,.1);
+  }
+  .grade-title h1 { font-size: 26px; font-weight: 800; margin-bottom: 4px; }
+  .grade-title p { font-size: 14px; opacity: .9; }
+
+  .grade-grid { display: flex; flex-direction: column; gap: 18px; padding: 10px 0; }
+  .grade-card {
+    background: rgba(255,255,255,.85);
+    border-radius: 22px;
+    padding: 28px 24px;
+    display: flex; align-items: center; gap: 16px;
+    cursor: pointer;
+    transition: transform .2s;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.6);
+  }
+  .grade-card:active { transform: scale(.97); }
+  .grade-card .gicon { font-size: 48px; }
+  .grade-card .ginfo h2 { font-size: 22px; font-weight: 800; color: #4A3520; }
+  .grade-card .ginfo p { font-size: 13px; color: #8A6B50; margin-top: 4px; }
+  .grade-card .arrow { margin-left: auto; color: #B89578; font-size: 20px; }
+
+  .grade-bottom { text-align: center; color: rgba(255,255,255,.95); font-size: 13px; padding-top: 16px; text-shadow: 0 1px 4px rgba(0,0,0,.1); }
+
+  /* ============ Screen: Subject Select ============ */
+  .screen-subject { padding-top: 18px; }
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 4px 16px;
+  }
+  .topbar h1 { font-size: 20px; font-weight: 800; color: #4A3520; }
+
+  .subj-grid { flex: 1; display: grid; gap: 14px; align-content: center; padding: 10px 0; }
+  .subj-card {
+    background: rgba(255,255,255,.9);
+    border-radius: 20px;
+    padding: 22px 18px;
+    display: flex; align-items: center; gap: 14px;
+    cursor: pointer;
+    transition: transform .2s;
+    border: 1px solid rgba(255,255,255,.6);
+    backdrop-filter: blur(6px);
+  }
+  .subj-card:active { transform: scale(.97); }
+  .subj-card .sicon { font-size: 38px; }
+  .subj-card .sinfo { flex: 1; }
+  .subj-card .sinfo h2 { font-size: 18px; font-weight: 800; color: #4A3520; }
+  .subj-card .sinfo p { font-size: 12px; color: #8A6B50; margin-top: 2px; }
+  .subj-card .sarrow { color: #B89578; font-size: 20px; }
+  .subj-card .sstars { color: #FFB627; font-size: 13px; margin-top: 4px; }
+
+  /* ============ Screen: Level Select ============ */
+  .screen-levels { padding-top: 18px; }
+  .level-info { color: #8A6B50; font-size: 13px; padding: 8px 4px 14px; text-align: center; }
+  .level-scroll { flex: 1; overflow-y: auto; padding: 0 0 10px; -webkit-overflow-scrolling: touch; }
+  .level-scroll::-webkit-scrollbar { width: 4px; }
+  .level-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,.1); border-radius: 2px; }
+  .level-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 4px 0; }
+  .level-btn {
+    aspect-ratio: 1;
+    background: rgba(255,255,255,.85);
+    border-radius: 16px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer; transition: .2s;
+    border: 1px solid rgba(255,255,255,.7);
+    backdrop-filter: blur(4px);
+    position: relative;
+    gap: 4px;
+  }
+  .level-btn:active:not(.locked) { transform: scale(.93); }
+  .level-btn.locked { opacity: .55; cursor: not-allowed; }
+  .level-btn .lvl-num { font-size: 22px; font-weight: 800; color: #4A3520; }
+  .level-btn .stars { font-size: 11px; letter-spacing: 1px; color: #FFB627; }
+  .level-btn .lock-icon { font-size: 16px; opacity: .6; }
+  .level-btn.current {
+    background: linear-gradient(135deg, #FF8C42, #FF6347);
+    border-color: transparent;
+    box-shadow: 0 4px 16px rgba(255,140,66,.4);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  .level-btn.current .lvl-num, .level-btn.current .stars { color: #fff; }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+  }
+
+  /* ============ Screen: Game ============ */
+  .screen-game {
+    padding: 14px 14px 16px;
+    background: transparent;
+  }
+  .game-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 4px 4px 10px;
+  }
+  .game-progress-top {
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,.55);
+    border-radius: 3px;
+    margin: 0 12px;
+    overflow: hidden;
+  }
+  .game-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #FFD93D, #FF8C42, #FF6347);
+    border-radius: 3px;
+    transition: width .4s ease;
+  }
+
+  .game-meta {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 4px 12px;
+    color: #4A3520;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .game-meta .q-progress { color: #6B5B45; }
+  .game-meta .combo { color: #FF6347; }
+  .game-meta .combo.zero { color: #B89578; }
+
+  .game-card {
+    background: #FFFFFF;
+    border-radius: 28px;
+    padding: 28px 22px 22px;
+    flex: 1;
+    overflow-y: auto;
+    box-shadow: 0 6px 24px rgba(0,0,0,.08);
+    border: 3px solid #FFFFFF;
+    animation: bounceIn .35s ease;
+  }
+  @keyframes bounceIn { from { opacity: 0; transform: scale(.95) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+  .game-card::-webkit-scrollbar { width: 4px; }
+  .game-card::-webkit-scrollbar-thumb { background: rgba(0,0,0,.1); border-radius: 2px; }
+
+  .subject-icon-big {
+    font-size: 64px;
+    text-align: center;
+    margin-bottom: 14px;
+    line-height: 1;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,.1));
+  }
+  .q-text-big {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333333;
+    line-height: 1.6;
+    text-align: center;
+    margin-bottom: 22px;
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .option-btn {
+    background: #FFFFFF;
+    border: 2px solid #ECECEC;
+    border-radius: 14px;
+    padding: 18px 12px;
+    font-size: 17px;
+    font-weight: 700;
+    color: #333333;
+    cursor: pointer;
+    transition: .2s;
+    text-align: center;
+    line-height: 1.4;
+    position: relative;
+  }
+  .option-btn:active:not(.disabled) { transform: scale(.96); }
+  .option-btn.selected {
+    border-color: #FF8C42;
+    background: #FFF7F0;
+  }
+  .option-btn.correct {
+    border-color: #6BCB77;
+    background: #E8F8EA;
+    color: #2E8B3E;
+  }
+  .option-btn.correct .star-badge {
+    display: block;
+    position: absolute;
+    top: -10px; left: -8px;
+    font-size: 24px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,.2));
+    animation: starPop .5s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes starPop { from { transform: scale(0); } to { transform: scale(1); } }
+  .star-badge { display: none; }
+  .option-btn.wrong {
+    border-color: #FF8C9E;
+    background: #FFE8EC;
+    color: #E74C3C;
+  }
+  .option-btn.disabled { pointer-events: none; }
+
+  /* Inline answer reveal */
+  /* Inline answer feedback (simple text below options) */
+  .inline-reveal {
+    margin-top: 8px;
+    text-align: center;
+    animation: fadeIn .35s ease;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+  .inline-reveal.wrong {
+    color: #FF6B6B;
+  }
+  .inline-reveal.correct {
+    color: #2E8B3E;
+  }
+  .inline-reveal .reveal-text .correct-ans {
+    font-weight: 800;
+  }
+  .inline-reveal .reveal-explanation {
+    margin-top: 6px;
+    font-size: 13px;
+    color: #8A6B50;
+    font-weight: 500;
+    line-height: 1.6;
+  }
+  .inline-reveal .reveal-explanation .exp-tag {
+    display: inline-block;
+    background: #FFE8D6;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    color: #FF8C42;
+    margin-right: 4px;
+  }
+
+  /* Game bottom bar */
+  .game-bottombar {
+    display: flex; gap: 10px; margin-top: 12px;
+    flex-shrink: 0;
+  }
+  .btn-confirm {
+    flex: 1;
+    background: linear-gradient(135deg, #FF8C42, #FF6347);
+    border: none; border-radius: 16px;
+    padding: 14px; font-size: 16px; font-weight: 700; color: #fff;
+    cursor: pointer; transition: .2s;
+    box-shadow: 0 4px 12px rgba(255,140,66,.3);
+  }
+  .btn-confirm:active:not(:disabled) { transform: scale(.97); }
+  .btn-confirm:disabled { opacity: .5; cursor: not-allowed; box-shadow: none; }
+  .btn-secondary {
+    background: rgba(255,255,255,.85);
+    border: none; border-radius: 16px;
+    padding: 14px 16px; font-size: 14px; font-weight: 600; color: #4A3520;
+    cursor: pointer; transition: .2s;
+    border: 1px solid rgba(0,0,0,.05);
+  }
+  .btn-secondary:active { transform: scale(.97); }
+
+  /* ============ Modal: Result ============ */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(74,53,32,.4);
+    display: none; align-items: center; justify-content: center;
+    padding: 24px;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.show { display: flex; }
+  .confirm-box { max-width: 340px; padding: 32px 24px 22px; }
+  .confirm-box .confirm-msg {
+    color: #8A6B50; font-size: 14px; margin: 4px 0 20px; line-height: 1.5;
+  }
+  .modal-box {
+    background: linear-gradient(180deg, #FFCBA4 0%, #FFE8D6 100%);
+    border-radius: 28px;
+    padding: 36px 28px 28px; max-width: 380px; width: 100%;
+    text-align: center; animation: popIn .4s cubic-bezier(.34,1.56,.64,1);
+    box-shadow: 0 12px 40px rgba(0,0,0,.15);
+  }
+  @keyframes popIn { from { transform: scale(.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .modal-box .big-emoji { font-size: 80px; margin-bottom: 8px; line-height: 1; }
+  .modal-box h2 {
+    font-size: 22px;
+    color: #FF6B6B;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+  .modal-box .stars-big { font-size: 36px; letter-spacing: 4px; margin-bottom: 16px; color: #fff; -webkit-text-stroke: 1px #B89578; }
+  .modal-box .stars-big .filled { color: #FFB627; -webkit-text-stroke: 1px #E69500; }
+  .modal-box .score-label {
+    color: #FFB627; font-size: 18px; font-weight: 700; margin-bottom: 4px;
+  }
+  .modal-box .score-label .num { font-size: 22px; }
+  .modal-box .stat-line {
+    color: #8A6B50; font-size: 14px; margin-bottom: 24px;
+  }
+
+  .modal-buttons { display: flex; gap: 10px; }
+  .modal-buttons button {
+    flex: 1;
+    padding: 12px 8px;
+    border-radius: 18px;
+    font-size: 14px; font-weight: 700; color: #fff;
+    cursor: pointer; transition: .2s;
+    border: none;
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+  }
+  .modal-buttons button:active { transform: scale(.95); }
+  .modal-buttons .btn-retry { background: linear-gradient(135deg, #FF8C42, #FF6347); }
+  .modal-buttons .btn-pick { background: linear-gradient(135deg, #4A90E2, #357ABD); }
+  .modal-buttons .btn-next { background: linear-gradient(135deg, #6BCB77, #4DAB59); }
+  .modal-buttons .btn-pick-icon { font-size: 12px; }
+
+  /* Confetti */
+  .confetti-container { position: fixed; inset: 0; pointer-events: none; z-index: 200; overflow: hidden; }
+  .confetti {
+    position: absolute; width: 10px; height: 10px; opacity: .9;
+    animation: confettiFall linear forwards;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(-20px) rotate(0deg) scale(1); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg) scale(.5); opacity: 0; }
+  }
+
+  /* Shake */
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+  }
+  .shake { animation: shake .4s ease; }
+
+  /* Responsive */
+  @media (max-width: 380px) {
+    .screen { padding: 14px 14px 18px; }
+    .grade-card { padding: 22px 18px; }
+    .grade-card .gicon { font-size: 40px; }
+    .grade-card .ginfo h2 { font-size: 19px; }
+    .q-text-big { font-size: 17px; }
+    .options-grid { gap: 10px; }
+    .option-btn { padding: 12px 8px; font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- ====== Screen: Grade Select ====== -->
+  <div class="screen screen-grade active" id="screenGrade">
+    <div class="grade-title">
+      <h1>📚 闯关复习大作战</h1>
+      <p>选择你的年级，开始挑战吧！</p>
+    </div>
+    <div class="grade-grid">
+      <div class="grade-card" onclick="selectGrade(2)">
+        <span class="gicon">🐣</span>
+        <div class="ginfo">
+          <h2>二年级</h2>
+          <p>语文 · 数学 共 40 关</p>
+        </div>
+        <span class="arrow">›</span>
+      </div>
+      <div class="grade-card" onclick="selectGrade(6)">
+        <span class="gicon">🦊</span>
+        <div class="ginfo">
+          <h2>六年级</h2>
+          <p>语文 · 数学 · 英语 共 60 关</p>
+        </div>
+        <span class="arrow">›</span>
+      </div>
+    </div>
+    <div class="grade-bottom" id="totalProgressDisplay">🎮 点击上方年级开始</div>
+  </div>
+
+  <!-- ====== Screen: Subject Select ====== -->
+  <div class="screen screen-subject" id="screenSubject">
+    <div class="topbar">
+      <button class="icon-btn" onclick="showScreen('screenGrade')">←</button>
+      <h1 id="subjHeader">二年级</h1>
+      <div style="width:40px"></div>
+    </div>
+    <div class="subj-grid" id="subjectGrid">
+      <!-- 动态渲染 -->
+    </div>
+  </div>
+
+  <!-- ====== Screen: Level Select ====== -->
+  <div class="screen screen-levels" id="screenLevels">
+    <div class="topbar">
+      <button class="icon-btn" onclick="showScreen('screenSubject')">←</button>
+      <h1 id="levelHeader">语文 · 二年级</h1>
+      <div style="width:40px"></div>
+    </div>
+    <div class="level-info" id="levelInfo">第 1 关最简单，越往后越有挑战 💪</div>
+    <div class="level-scroll">
+      <div class="level-grid" id="levelGrid"></div>
+    </div>
+  </div>
+
+  <!-- ====== Screen: Game ====== -->
+  <div class="screen screen-game" id="screenGame">
+    <div class="game-topbar">
+      <button class="icon-btn" onclick="confirmQuit()">←</button>
+      <div class="game-progress-top">
+        <div class="game-progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <div style="width:40px"></div>
+    </div>
+    <div class="game-meta">
+      <span class="q-progress" id="qProgress">1 / 8</span>
+      <span class="combo zero" id="comboDisplay">🔥 连击 0</span>
+    </div>
+    <div class="game-card" id="questionCard">
+      <div class="subject-icon-big" id="subjectIcon">❓</div>
+      <div class="q-text-big" id="qText">题目加载中...</div>
+      <div class="options-grid" id="optionsContainer"></div>
+      <div class="inline-reveal" id="revealBox" style="display:none">
+        <div class="reveal-text" id="revealText"></div>
+        <div class="reveal-explanation" id="revealExplanation"></div>
+      </div>
+    </div>
+    <div class="game-bottombar">
+      <button class="btn-secondary" id="btnPrev" onclick="prevQuestion()" style="display:none">← 上一题</button>
+      <button class="btn-confirm" id="btnConfirm" disabled onclick="confirmAnswer()">确认答案</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Result Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <div class="big-emoji" id="modalEmoji">🎉</div>
+    <h2 id="modalTitle">太棒了！</h2>
+    <div class="stars-big" id="modalStars">
+      <span class="filled">⭐</span><span class="filled">⭐</span><span class="filled">⭐</span>
+    </div>
+    <div class="score-label">得分：<span class="num" id="modalScore">30</span></div>
+    <div class="stat-line">答对 <span id="modalCorrect">3</span>/<span id="modalTotal">6</span> 题</div>
+    <div class="modal-buttons">
+      <button class="btn-retry" onclick="retryLevel()">🔄 再试一次</button>
+      <button class="btn-pick" onclick="backToLevels()">📋 选关</button>
+      <button class="btn-next" id="modalBtnNext" onclick="goNextLevel()">➡️ 下一关</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Quit Modal -->
+<div class="modal-overlay" id="confirmOverlay">
+  <div class="modal-box confirm-box">
+    <div class="big-emoji">🤔</div>
+    <h2 id="confirmTitle">确定要退出吗？</h2>
+    <div class="confirm-msg">已答题进度不会保存哦～</div>
+    <div class="modal-buttons">
+      <button class="btn-pick" onclick="closeConfirmQuit()">继续答题</button>
+      <button class="btn-retry" onclick="doQuit()">确认退出</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const LABELS = ['A', 'B', 'C', 'D'];
+const SUBJECTS_BY_GRADE = {
+  2: [
+    { id: 'chinese', icon: '📜', name: '语文' },
+    { id: 'math', icon: '🧮', name: '数学' },
+  ],
+  6: [
+    { id: 'chinese', icon: '📜', name: '语文' },
+    { id: 'math', icon: '🧮', name: '数学' },
+    { id: 'english', icon: '🔤', name: '英语' },
+  ],
+};
+const SUBJECT_NAMES = { chinese:'语文', math:'数学', english:'英语' };
+const SUBJECT_ICONS = { chinese:'❓', math:'❓', english:'❓' };
+const QUESTIONS_PER_LEVEL = 6;
+
+// -------- 二年级 语文 --------
+function genGrade2Chinese(level) {
+  const pool = [
+    // L1-3: 拼音识字
+    ...[{q:'"春天"的拼音是？',o:['chūn tiān','cūn tiān','chuān tiān','chūn tān'],a:0,e:'"春"声母ch、韵母un、标调；"天"读第一声。'},{q:'"花朵"的拼音是？',o:['huā duǒ','huā dǒu','hā duǒ','huā tuǒ'],a:0,e:'"花"读第一声huā，"朵"读第三声duǒ。'},{q:'下列哪个是"鸟"字？',o:['鸟','乌','岛','马'],a:0,e:'"鸟"字上面是撇，下面是小点。'},{q:'"山"字的笔顺第一笔是？',o:['竖','横','撇','点'],a:0,e:'"山"先写中间一竖，再写左右两竖。'},{q:'"水"字共有几画？',o:['4画','3画','5画','6画'],a:0,e:'"水"字：竖钩、横撇、撇、捺，共4画。'},{q:'"大"的反义词是？',o:['小','多','少','长'],a:0,e:'大 ↔ 小，意义相对的词叫反义词。'},{q:'"上"的反义词是？',o:['下','中','左','右'],a:0,e:'上 ↔ 下，表示方向相对。'}],
+
+    // L4-6: 组词 & 词语
+    ...[{q:'"开心"的近义词是？',o:['快乐','伤心','难过','着急'],a:0,e:'"开心"表示高兴、愉快，"快乐"意思相近。'},{q:'"美丽"的反义词是？',o:['丑陋','漂亮','好看','可爱'],a:0,e:'美丽 ↔ 丑陋，意义相反。'},{q:'下列词语中不同类的是？',o:['苹果','香蕉','水果','橘子'],a:2,e:'苹果、香蕉、橘子都是具体水果，而"水果"是总称。'},{q:'"仔细"的意思是什么？',o:['认真','马虎','粗心','大意'],a:0,e:'"仔细"是细心认真的意思。'},{q:'"温暖"的反义词是？',o:['寒冷','凉爽','炎热','温和'],a:0,e:'温暖 ↔ 寒冷，温度差别最大的一对。'},{q:'用"高兴"造句，哪个正确？',o:['我今天很高兴。','我高兴今天。','很高兴我今天。','今天高兴我。'],a:0,e:'汉语语序：时间(今天)+主语(我)+状态(很高兴)。'}],
+
+    // L7-10: 句子 & 阅读
+    ...[{q:'"弯弯的月亮像小船。"用了什么修辞？',o:['比喻','拟人','夸张','排比'],a:0,e:'把月亮比作小船，喻词"像"，是明喻。'},{q:'"太阳从东边升起来。"中"升"的意思是？',o:['向上移动','向下移动','向左移动','向右移动'],a:0,e:'太阳升起是从下往上的动作。'},{q:'补充句子：春天来了，_____。',o:['花儿开了','花儿谢了','树叶落了','下雪了'],a:0,e:'春天百花盛开，所以"花儿开了"最合适。'},{q:'"小明在认真地看书。"告诉我们小明很？',o:['专心','马虎','淘气','懒惰'],a:0,e:'"认真地看书"表现出小明的专心。'},{q:'下面哪句是完整的句子？',o:['我去学校。','去学校。','学校去。','我学校。'],a:0,e:'完整句子要有主语和谓语，"我去学校"具备主谓宾。'},{q:'"白云在天空中飘来飘去。"说明白云？',o:['很轻','很重','很快','很慢'],a:0,e:'白云能轻盈地飘动，是因为它很轻。'}],
+
+    // L11-15: 古诗 & 文化
+    ...[{q:'"锄禾日当午"下一句是？',o:['汗滴禾下土','粒粒皆辛苦','春种一粒粟','秋收万颗子'],a:0,e:'出自《悯农》李绅，意为中午农民在田里锄禾，汗水滴在禾苗下面的土里。'},{q:'"春眠不觉晓"出自哪首诗？',o:['春晓','静夜思','咏鹅','悯农'],a:0,e:'孟浩然《春晓》全诗：春眠不觉晓，处处闻啼鸟。'},{q:'"举头望明月"下一句是？',o:['低头思故乡','疑是地上霜','处处闻啼鸟','春风吹又生'],a:0,e:'李白《静夜思》：举头望明月，低头思故乡。'},{q:'"鹅鹅鹅"是哪位诗人写的？',o:['骆宾王','李白','杜甫','白居易'],a:0,e:'唐代骆宾王7岁时所作《咏鹅》。'},{q:'"夜来风雨声"下一句是？',o:['花落知多少','处处闻啼鸟','春风吹又生','粒粒皆辛苦'],a:0,e:'孟浩然《春晓》：夜来风雨声，花落知多少。'},{q:'"谁知盘中餐"下一句是？',o:['粒粒皆辛苦','汗滴禾下土','春种一粒粟','秋收万颗子'],a:0,e:'《悯农》：谁知盘中餐，粒粒皆辛苦，告诫我们要爱惜粮食。'}],
+
+    // L16-20: 综合
+    ...[{q:'下列哪组是反义词？',o:['高—矮','高—大','高—长','高—远'],a:0,e:'"矮"和"高"是反义词，其他都包含"高"字但并非反义词。'},{q:'"漂"字可以组成什么词？',o:['漂亮','漂高','漂大','漂长'],a:0,e:'"漂"字常见组词：漂亮、漂浮、漂流等。'},{q:'"认真地"应该填在哪个句子中？',o:['他____学习。','他____跑步。','他____吃饭。','他____睡觉。'],a:0,e:'"认真地"修饰学习、读书这类需要专注的事情最合适。'},{q:'"马上"的意思是什么？',o:['立刻','马上面','骑马','马上来'],a:0,e:'"马上"在这里是副词，意思是"立刻、很快"。'},{q:'"非常"的近义词是？',o:['特别','经常','平常','正常'],a:0,e:'"非常"表示程度深，近义词有"特别""十分""格外"等。'},{q:'"一片片叶子从树上落下来"说明是什么季节？',o:['秋天','春天','夏天','冬天'],a:0,e:'树叶变黄飘落是秋天的典型景象。'}],
+  ];
+  return getBatch(pool, level, QUESTIONS_PER_LEVEL);
+}
+
+// -------- 二年级 数学 --------
+function genGrade2Math(level) {
+  const qs = [];
+  let maxNum, ops;
+  if (level <= 5) { maxNum = 20; ops = ['+','-']; }
+  else if (level <= 10) { maxNum = 50; ops = ['+','-']; }
+  else if (level <= 15) { maxNum = 100; ops = ['+','-','×']; }
+  else { maxNum = 100; ops = ['+','-','×','÷']; }
+
+  for (let i = 0; i < QUESTIONS_PER_LEVEL; i++) {
+    let op = ops[Math.floor(Math.random() * ops.length)];
+    let a, b, answer, display, expl;
+    if (op === '+') {
+      a = rand(1, maxNum-1); b = rand(1, maxNum - a);
+      answer = a + b; display = `${a} + ${b} = ?`;
+      expl = `${a} + ${b} = ${answer}`;
+    } else if (op === '-') {
+      a = rand(2, maxNum); b = rand(1, a);
+      answer = a - b; display = `${a} - ${b} = ?`;
+      expl = `${a} - ${b} = ${answer}`;
+    } else if (op === '×') {
+      a = rand(2, 9); b = rand(2, 9);
+      answer = a * b; display = `${a} × ${b} = ?`;
+      expl = `${a} × ${b} = ${answer}`;
+    } else {
+      b = rand(2, 9); answer = rand(1, 9); a = b * answer;
+      display = `${a} ÷ ${b} = ?`;
+      expl = `${a} ÷ ${b} = ${answer}（即 ${b} × ${answer} = ${a}）`;
+    }
+    const { opts, ansIdx } = generateOptions(answer);
+    qs.push({ q: display, o: opts, a: ansIdx, e: expl });
+  }
+  return qs;
+}
+
+// -------- 二年级 英语 --------
+function genGrade2English(level) {
+  const pool = [
+    ...[{q:'"苹果"的英文是？',o:['apple','banana','orange','grape'],a:0,e:'apple /ˈæpl/ n.苹果'},{q:'"猫"的英文是？',o:['cat','dog','bird','fish'],a:0,e:'cat /kæt/ n.猫'},{q:'"红色"的英文是？',o:['red','blue','green','yellow'],a:0,e:'red /red/ adj.红色的'},{q:'"一"的英文是？',o:['one','two','three','four'],a:0,e:'基数词：one 一、two 二、three 三、four 四'},{q:'"大"的英文是？',o:['big','small','tall','short'],a:0,e:'big 大的，small 小的（描述体积）。'},{q:'"狗"的英文是？',o:['dog','cat','pig','duck'],a:0,e:'dog /dɒɡ/ n.狗'},{q:'"蓝色"的英文是？',o:['blue','red','green','black'],a:0,e:'blue /bluː/ adj.蓝色的'},{q:'"妈妈"的英文是？',o:['mom','dad','sister','brother'],a:0,e:'mom 妈妈，dad 爸爸'},{q:'"你好"的英文是？',o:['Hello','Goodbye','Thank you','Sorry'],a:0,e:'Hello 是最常用的打招呼用语。'}],
+
+    ...[{q:'"What color is the sky?" 的回答是？',o:['blue','red','green','yellow'],a:0,e:'天空是蓝色的，故答 blue。'},{q:'"I have two ___." (眼睛)',o:['eyes','ears','hands','feet'],a:0,e:'eye的复数形式是eyes。'},{q:'"Good morning!"的意思是？',o:['早上好','下午好','晚上好','你好'],a:0,e:'morning 早晨，Good morning 是早上见面问候。'},{q:'"Thank you"的回答是？',o:["You're welcome",'Thank you','OK','Sorry'],a:0,e:"You're welcome 是对感谢的礼貌回应。"},{q:'"How old are you?" 的回答形式？',o:['I am seven.','I am sevens.','I seven.','Seven I am.'],a:0,e:'回答年龄用"I am + 数字"。'},{q:'"猴子"的英文是？',o:['monkey','lion','tiger','bear'],a:0,e:'monkey /ˈmʌŋki/ n.猴子'},{q:'"水"的英文是？',o:['water','milk','juice','tea'],a:0,e:'water /ˈwɔːtər/ n.水'},{q:'"I like cats." (我喜欢猫)',o:['正确','错误'],a:0,e:'cats是复数，like 后用复数名词表示"喜欢这一类"。'},{q:'"太阳"的英文是？',o:['sun','moon','star','cloud'],a:0,e:'sun /sʌn/ n.太阳'}],
+
+    ...[{q:'"It is ___ apple." 空格里填什么？',o:['an','a','the','/'],a:0,e:'apple 以元音 /æ/ 开头，不定冠词用 an。'},{q:'"She ___ a student." 空格填？',o:['is','am','are','be'],a:0,e:'She 是第三人称单数，be动词用 is。'},{q:'"我们"的英文是？',o:['we','they','you','he'],a:0,e:'人称代词：we 我们，they 他们'},{q:'"Happy birthday!"的意思是？',o:['生日快乐','新年快乐','圣诞快乐','节日快乐'],a:0,e:'birthday 生日。'},{q:'"The cat is ___ the box." 在盒子里？',o:['in','on','at','to'],a:0,e:'in 表示在某个空间内部。'},{q:'"How many fingers do you have?" 回答是？',o:['Ten.','Yes.','I am ten.','They ten.'],a:0,e:'How many 问数量，直接回答数字 Ten。'},{q:'"I can run." 中的 can 是？',o:['情态动词','动词','名词','形容词'],a:0,e:'can 是情态动词，后接动词原形。'},{q:'"老师"的英文是？',o:['teacher','doctor','driver','farmer'],a:0,e:'teacher /ˈtiːtʃər/ n.老师'}],
+  ];
+  return getBatch(pool, level, QUESTIONS_PER_LEVEL);
+}
+
+// -------- 六年级 语文 --------
+function genGrade6Chinese(level) {
+  const pool = [
+    ...[{q:'"画蛇添足"这个成语的意思是？',o:['多此一举','画得好看','蛇很漂亮','添上颜色'],a:0,e:'出自《战国策》，比喻做了多余的事，反而把事情弄糟。'},{q:'"守株待兔"告诉我们什么道理？',o:['不要不劳而获','要爱护动物','要种树','要等兔子'],a:0,e:'《韩非子》寓言，比喻妄想不劳而获，或死守经验。'},{q:'下列哪个成语表示"非常危险"？',o:['千钧一发','风和日丽','春暖花开','一帆风顺'],a:0,e:'千钧一发：千钧重量系在一根头发上，形容情况极其危急。'},{q:'"亡羊补牢"中"亡"的意思是？',o:['丢失','死亡','逃跑','忘记'],a:0,e:'《战国策》："亡"指丢失，"牢"指羊圈，比喻出了问题以后想办法补救。'},{q:'"刻舟求剑"讽刺了什么样的人？',o:['不懂变通的人','会刻字的人','会划船的人','会求剑的人'],a:0,e:'《吕氏春秋》寓言，讽刺墨守成规、不知变通的人。'},{q:'"叶公好龙"中"好"的意思是？',o:['喜欢','好处','很好','友好'],a:0,e:'汉代刘向《新序》，讽刺表里不一的人，表面喜欢实际害怕。'}],
+
+    ...[{q:'"随风潜入夜"下一句是？',o:['润物细无声','当春乃发生','好雨知时节','花重锦官城'],a:0,e:'杜甫《春夜喜雨》：润物细无声，形容春雨默默滋润万物。'},{q:'"谁言寸草心"下一句是？',o:['报得三春晖','疑是地上霜','处处闻啼鸟','粒粒皆辛苦'],a:0,e:'孟郊《游子吟》：比喻子女难以报答母亲的深恩。'},{q:'"春风又绿江南岸"中"绿"字的妙处在于？',o:['化静为动，写出春意','写出了颜色','写出了绿色','写出了风景'],a:0,e:'王安石反复推敲，将形容词"绿"作动词用，使春风有了生机。'},{q:'"但愿人长久"下一句是？',o:['千里共婵娟','低头思故乡','月有阴晴圆缺','此事古难全'],a:0,e:'苏轼《水调歌头》：但愿人长久，千里共婵娟。'},{q:'"粉骨碎身浑不怕"出自哪首诗？',o:['石灰吟','竹石','墨梅','己亥杂诗'],a:0,e:'于谦《石灰吟》，表达为国尽忠、不怕牺牲的志向。'},{q:'"千磨万击还坚劲"描写的是？',o:['竹子','梅花','石头','松树'],a:0,e:'郑燮《竹石》：千磨万击还坚劲，任尔东西南北风，赞美竹的坚韧。'}],
+
+    ...[{q:'下列哪个是设问句？',o:['这是谁的书？这是我的书。','这是谁的书？','这是我的书。','书是谁的？'],a:0,e:'设问是自问自答，"这是谁的书？这是我的书"为自问自答。'},{q:'"太阳像一个大火球。"用了什么修辞？',o:['比喻','拟人','夸张','排比'],a:0,e:'把太阳比作大火球，是明喻（本体+喻体+喻词"像"）。'},{q:'"他跑得真快啊！"表达了什么语气？',o:['感叹','疑问','陈述','祈使'],a:0,e:'句末"啊"和感叹号表示强烈情感，是感叹句。'},{q:'下列句子中有语病的是？',o:['我昨天去了公园玩。','我玩去了公园昨天。','昨天我去了公园玩。','我去公园玩了昨天。'],a:1,e:'"我玩去了公园昨天"语序混乱，时间状语应放动词前。'},{q:'"这座桥有五十年的历史了。"缩句正确的是？',o:['桥有历史。','这座桥有历史。','桥有五十年历史。','这座桥有五十年的历史。'],a:0,e:'缩句保留主语"桥"、谓语"有"、宾语"历史"，去掉修饰词。'},{q:'"他不仅学习好，而且品德好。"是什么关系的复句？',o:['递进','并列','转折','因果'],a:0,e:'"不仅……而且……"关联词表示递进关系，后比前更进一层。'}],
+
+    ...[{q:'"为是其智弗若与？"中"为"的意思是？',o:['因为','为了','成为','作为'],a:0,e:'《孟子·告子上》：为，同"谓"，这里是"因为"。'},{q:'"思援弓缴而射之"中"之"指代的是？',o:['天鹅','弓','箭','人'],a:0,e:'《孟子》：之指代前文的"天鹅"（鸿鹄）。'},{q:'"两小儿辩日"中两个小孩争论的是？',o:['太阳远近','太阳大小','太阳颜色','太阳温度'],a:0,e:'《列子·汤问》：一儿说日出时近，日中时远；另一儿观点相反。'},{q:'"孰为汝多知乎？"这句话的意思是？',o:['谁说你知识渊博呢？','谁说你很多知识？','谁说你知道得多？','谁让你知道得多？'],a:0,e:'《两小儿辩日》：孔子被小儿反问"谁说你的知识渊博呢？"。'},{q:'"学弈"这则故事告诉我们？',o:['学习要专心致志','学下棋很难','两个人学不好','老师很重要'],a:0,e:'《孟子·告子上》：两人学弈，一人专心致志，一人三心二意，结果不同。'},{q:'"弗若"的意思是？',o:['不如','不是','不会','不要'],a:0,e:'弗：不；若：如同。弗若：不如。'}],
+
+    ...[{q:'"锲而不舍"中"锲"的意思是？',o:['雕刻','放弃','坚持','努力'],a:0,e:'《荀子·劝学》：锲：用刀刻。锲而不舍：不停地刻，比喻坚持不懈。'},{q:'"有朋自远方来"下一句是？',o:['不亦乐乎','不亦说乎','不亦君子乎','人不知而不愠'],a:0,e:'《论语·学而》：有朋自远方来，不亦乐乎？'},{q:'"见贤思齐焉"中"齐"的意思是？',o:['看齐','整齐','一起','齐全'],a:0,e:'《论语·里仁》：齐，看齐。见贤思齐：看到德才兼备的人就想赶上他。'},{q:'"己所不欲"下一句是？',o:['勿施于人','勿以善小而不为','勿以恶小而为之','施于人'],a:0,e:'《论语·卫灵公》：己所不欲，勿施于人。'},{q:'"温故而知新"告诉我们？',o:['复习旧知识能获得新理解','学习要温习','要学新知识','要记住旧知识'],a:0,e:'《论语·为政》：温习旧知识，能悟出新的道理。'},{q:'"学而不思则罔"中"罔"的意思是？',o:['迷惑','没有','网络','罔然'],a:0,e:'《论语·为政》：罔：迷惑，茫然无所得。只学习不思考就会迷茫。'}],
+  ];
+  return getBatch(pool, level, QUESTIONS_PER_LEVEL);
+}
+
+// -------- 六年级 数学 --------
+function genGrade6Math(level) {
+  const qs = [];
+  for (let i = 0; i < QUESTIONS_PER_LEVEL; i++) {
+    let q, opts, answer, ansIdx, expl;
+    if (level <= 5) {
+      const op = ['+','-','×'][rand(0,2)];
+      let a, b;
+      if (op === '+') { a = rand(100, 999); b = rand(100, 999); q = `${a} + ${b} = ?`; answer = a + b; expl = `${a} + ${b} = ${answer}`; }
+      else if (op === '-') { a = rand(200, 999); b = rand(100, a-1); q = `${a} - ${b} = ?`; answer = a - b; expl = `${a} - ${b} = ${answer}`; }
+      else { a = rand(12, 99); b = rand(2, 9); q = `${a} × ${b} = ?`; answer = a * b; expl = `${a} × ${b} = ${answer}`; }
+      const gen = generateOptions(answer);
+      opts = gen.opts; ansIdx = gen.ansIdx;
+    } else if (level <= 10) {
+      const fracQ = genFractionQ();
+      q = fracQ.q; opts = fracQ.o; ansIdx = fracQ.a;
+      expl = fracQ.e;
+    } else if (level <= 15) {
+      if (i % 2 === 0) {
+        const a = rand(10, 99); const b = rand(10, 99);
+        const c = parseFloat((a / b).toFixed(1));
+        q = `${a} ÷ ${b} ≈ ?（保留一位小数）`;
+        answer = c;
+        const gen = generateOptions(answer);
+        opts = gen.opts; ansIdx = gen.ansIdx;
+        expl = `${a} ÷ ${b} = ${(a/b).toFixed(2)}，保留一位小数 ≈ ${c}`;
+      } else {
+        const pct = Math.floor(Math.random() * 100) + 1;
+        const num = Math.floor(Math.random() * 200) + 50;
+        q = `${pct}% 的 ${num} 是多少？`;
+        answer = Math.round(num * pct / 100);
+        const gen = generateOptions(answer);
+        opts = gen.opts; ansIdx = gen.ansIdx;
+        expl = `${pct}% × ${num} = ${pct*num/100} ≈ ${answer}`;
+      }
+    } else {
+      if (i < 4) {
+        const x = rand(2, 20);
+        const coef = rand(2, 9);
+        const c2 = rand(1, 20);
+        const result = coef * x + c2;
+        q = `解方程：${coef}x + ${c2} = ${result}，x = ?`;
+        answer = x;
+        const gen = generateOptions(answer);
+        opts = gen.opts; ansIdx = gen.ansIdx;
+        expl = `${coef}x = ${result} - ${c2} = ${result-c2}，所以 x = ${answer}`;
+      } else {
+        const r = rand(3, 10);
+        const area = Math.round(Math.PI * r * r * 10) / 10;
+        q = `圆的半径 r = ${r}，面积 = ?（π≈3.14）`;
+        answer = area;
+        const gen = generateOptions(answer);
+        opts = gen.opts; ansIdx = gen.ansIdx;
+        expl = `面积 = π × r² = 3.14 × ${r}² ≈ ${area}`;
+      }
+    }
+    qs.push({ q, o: opts, a: ansIdx, e: expl });
+  }
+  return qs;
+}
+
+function genFractionQ() {
+  const denom = rand(2, 9);
+  let num = rand(1, denom-1);
+  const simp = gcd(num, denom);
+  num /= simp; const d2 = denom / simp;
+  const op = ['+','-'][rand(0,1)];
+  const n2 = rand(1, 5);
+  let resultNum, resultDen;
+  if (op === '+') {
+    resultNum = num * n2 + d2;
+    resultDen = d2 * n2;
+  } else {
+    if (num/d2 < 1/n2) {
+      resultNum = d2 - num * n2;
+      resultDen = d2 * n2;
+    } else {
+      resultNum = num * n2 - d2;
+      resultDen = d2 * n2;
+    }
+    if (resultNum === 0) resultNum = 1;
+  }
+  const g = gcd(Math.abs(resultNum), resultDen);
+  resultNum /= g; resultDen /= g;
+  const q = `${num}/${d2} ${op} 1/${n2} = ?`;
+  const answer = `${resultNum}/${resultDen}`;
+  const opts = [
+    answer,
+    `${resultNum+1}/${resultDen}`,
+    `${resultNum}/${resultDen+2}`,
+    `${Math.max(1,resultNum-1)}/${resultDen}`,
+  ];
+  const idx = Array.from({length:4},(_,i)=>i);
+  shuffle(idx);
+  const shuffled = idx.map(i=>opts[i]);
+  const ansIdxShuffled = idx.indexOf(0);
+  let expl;
+  if (op === '+') {
+    expl = `通分：${num}/${d2} = ${num*n2}/${d2*n2}，1/${n2} = ${d2}/${d2*n2}，相加得 ${num*n2+d2}/${d2*n2} = ${answer}`;
+  } else {
+    expl = `通分：${num}/${d2} = ${num*n2}/${d2*n2}，1/${n2} = ${d2}/${d2*n2}，相减得 ${Math.abs(num*n2-d2)}/${d2*n2} = ${answer}`;
+  }
+  return { q, o: shuffled, a: ansIdxShuffled, e: expl };
+}
+
+// -------- 六年级 英语 --------
+function genGrade6English(level) {
+  const pool = [
+    ...[{q:'"重要的"英文是？',o:['important','interesting','impossible','impressive'],a:0,e:'important /ɪmˈpɔːrtnt/ adj.重要的'},{q:'"Yesterday I ___ to the park."',o:['went','go','gone','going'],a:0,e:'Yesterday提示过去时，go的过去式是went。'},{q:'"She is ___ than her sister."',o:['taller','tall','tallest','more tall'],a:0,e:'than是比较级标志，tall的比较级是taller。'},{q:'"Have you ever ___ to Beijing?"',o:['been','be','being','was'],a:0,e:'Have you ever + 过去分词，been是be的过去分词。'},{q:'"What ___ you do yesterday?"',o:['did','do','does','doing'],a:0,e:'yesterday提示一般过去时，助动词用did。'},{q:'"environment"的意思是？',o:['环境','娱乐','入口','装备'],a:0,e:'environment /ɪnˈvaɪrənmənt/ n.环境'},{q:'"He is interested ___ music."',o:['in','on','at','for'],a:0,e:'be interested in... 对……感兴趣，固定搭配。'},{q:'"I have been studying English ___ three years."',o:['for','since','in','during'],a:0,e:'for + 一段时间，since + 时间起点。'}],
+
+    ...[{q:'"If it rains tomorrow, I ___ at home."',o:['will stay','stay','stayed','am staying'],a:0,e:'主从复合句：主句用一般将来时 will + 动词原形。'},{q:'"The book ___ is on the table is mine."',o:['which','who','whom','whose'],a:0,e:'先行词是物（book），关系代词用which。'},{q:'"Congratulations!"的意思是？',o:['祝贺你','对不起','谢谢你','没关系'],a:0,e:'Congratulations /kənˌɡrætʃuˈleɪʃənz/ 祝贺你'},{q:'"Neither he nor I ___ right."',o:['am','is','are','be'],a:0,e:'Neither...nor...连接主语时，谓语遵循"就近原则"，靠近I所以用am。'},{q:'"By the time I arrived, she ___ left."',o:['had','has','have','was'],a:0,e:'过去完成时：过去的过去。到达时她已离开，用had left。'},{q:'"I used to ___ early."',o:['get up','getting up','got up','gets up'],a:0,e:'used to + 动词原形表示过去常常做某事。'},{q:'"communication"的意思是？',o:['交流','竞赛','社区','命令'],a:0,e:'communication /kəˌmjuːnɪˈkeɪʃn/ n.交流，沟通'},{q:'"Would you mind ___ the window?"',o:['opening','open','opened','to open'],a:0,e:'mind后接动名词doing，表"介意做某事"。'}],
+
+    ...[{q:'"Not only he but also I ___ wrong."',o:['am','is','are','be'],a:0,e:'not only...but also...连接主语时，谓语动词遵循"就近原则"，靠近I所以用am。'},{q:'"I wish I ___ fly."',o:['could','can','will','would'],a:0,e:'wish后用虚拟语气，表示与现在事实相反用could/would。'},{q:'"The more you read, ___ you will learn."',o:['the more','more','most','the most'],a:0,e:'固定搭配"the more...the more..."越……越……。'},{q:'"He is too young ___ go to school."',o:['to','for','in','at'],a:0,e:'固定搭配"too...to..."太……以至于不能……。'},{q:'"She asked me where I ___."',o:['lived','live','living','lives'],a:0,e:'宾语从句用陈述句语序，且主句是过去式，从句也用过去式。'},{q:'"through"和"across"的区别是？',o:['through穿越内部，across横跨表面','一样','through是介词，across是副词','没有区别'],a:0,e:'through表示"穿过内部"，across表示"横跨表面"。'},{q:'"I have a lot of homework ___."',o:['to do','doing','done','do'],a:0,e:'不定式作定语表示"有待做的作业"。'},{q:'"He was ___ tired that he fell asleep."',o:['so','such','too','very'],a:0,e:'固定句型"so...that..."如此……以至于……。'}],
+
+    ...[{q:'"尽管"的英文是？',o:['although','because','so','therefore'],a:0,e:'although意为"尽管"，引导让步状语从句。'},{q:'"She runs fast, ___ she?" 的反意疑问？',o:["doesn't she",'does she','isn\'t she','has she'],a:0,e:'反意疑问句：前肯后否。前肯定则疑问部分否定。'},{q:'"___ interesting the story is!" 感叹句首词？',o:['How','What','What a','What an'],a:0,e:'感叹句：修饰形容词用How，修饰名词用What。'},{q:'"I prefer reading ___ watching TV."',o:['to','than','over','from'],a:0,e:'prefer A to B：喜欢A胜过B，固定搭配。'},{q:'"The movie ___ already started when we arrived."',o:['had','has','have','was'],a:0,e:'过去完成时had done表示"过去的过去"，到达时电影已开始。'},{q:'"education"的意思是？',o:['教育','娱乐','电子','编辑'],a:0,e:'education /ˌɛdʒʊˈkeɪʃən/ n.教育'},{q:'"He succeeded ___ hard work."',o:['through','by','with','in'],a:0,e:'succeed through... 通过……取得成功。'},{q:'"His arrival made us happy." 中 arrival 是？',o:['名词','动词','形容词','副词'],a:0,e:'arrive是动词，名词形式为arrival。'}],
+
+    ...[{q:'"It is high time you ___ to bed."',o:['went','go','going','have gone'],a:0,e:'固定句型"It is (high) time + 过去时"表示该做某事了。'},{q:'"No sooner had he arrived ___ it began to rain."',o:['than','when','then','before'],a:0,e:'固定搭配"No sooner...than..."一……就……。'},{q:'"Hardly ___ I finished when he came."',o:['had','have','has','did'],a:0,e:'固定搭配"Hardly had...when..."几乎还没……就……。'},{q:'"scarcely"的反义词是？',o:['abundantly','hardly','barely','rarely'],a:0,e:'scarcely意为"几乎不"，反义词abundantly意为"充足地"。'},{q:'"既是……又是……" 的英语关联词？',o:['both...and...','either...or...','neither...nor...','not only...but also...'],a:0,e:'both...and...表示"两者都……"，表示双重身份。'},{q:'"The novel ___ is well worth reading."',o:['itself','himself','herself','myself'],a:0,e:'反身代词强调"它自己"——这本书本身就值得一读。'},{q:'"Take ___ umbrella in case it rains."',o:['an','a','the','/'],a:0,e:'umbrella以元音/u/开头，不定冠词用an。'},{q:'"punctual"的意思是？',o:['准时的','礼貌的','美丽的','积极的'],a:0,e:'punctual /ˈpʌŋktʃuəl/ adj.准时的，守时的。'}],
+  ];
+  return getBatch(pool, level, QUESTIONS_PER_LEVEL);
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function shuffle(arr) { for (let i = arr.length-1; i > 0; i--) { const j = rand(0,i); [arr[i],arr[j]] = [arr[j],arr[i]]; } return arr; }
+function gcd(a, b) { while(b){[a,b]=[b,a%b]} return a; }
+
+function generateOptions(answer) {
+  const ans = answer + '';
+  const opts = new Set([ans]);
+  let attempts = 0;
+  while (opts.size < 4 && attempts < 50) {
+    let fake;
+    if (typeof answer === 'number') {
+      const range = Math.max(10, Math.abs(answer) * 0.4);
+      const delta = rand(-Math.floor(range), Math.floor(range));
+      fake = answer + (delta === 0 ? 1 : delta);
+      if (fake < 0) fake = answer + 2;
+      fake = fake + '';
+    } else {
+      fake = ans;
+    }
+    opts.add(fake);
+    attempts++;
+  }
+  // 如果还没凑够，补默认值
+  let counter = 0;
+  while (opts.size < 4) { opts.add(`错误${counter++}`); }
+  const arr = shuffle([...opts]);
+  const ansIdx = arr.indexOf(ans);
+  return { opts: arr, ansIdx };
+}
+
+function getBatch(pool, level, count) {
+  // 对每个关卡，使用不同的偏移起始位置
+  const start = ((level-1) * count) % Math.max(1, pool.length - count + 1);
+  const idx = Math.min(start, Math.max(0, pool.length - count));
+  return pool.slice(idx, idx + count).map(q => {
+    const indices = [0, 1, 2, 3];
+    shuffle(indices);
+    const opts = indices.map(i => q.o[i]);
+    const ansIdx = indices.indexOf(q.a);
+    const explanation = q.e || `正确答案：${q.o[q.a]}`;
+    return { q: q.q, o: opts, a: ansIdx, e: explanation };
+  });
+}
+
+// ============================================================
+// STATE
+// ============================================================
+const SAVE_KEY = 'eduGameProgress';
+let state = {
+  grade: 2,
+  subject: 'chinese',
+  currentLevel: 1,
+  progress: {},
+};
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (raw) state.progress = JSON.parse(raw);
+  } catch(e) {}
+  if (!state.progress) state.progress = {};
+}
+function saveProgress() {
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(state.progress)); } catch(e) {}
+}
+function getKey() { return `${state.grade}-${state.subject}`; }
+function getLevelData() {
+  return state.progress[getKey()] || { completed: [], stars: {} };
+}
+function levelCompleted(lvl) { return getLevelData().completed.includes(lvl); }
+function levelStars(lvl) { return getLevelData().stars[lvl] || 0; }
+function totalStars(grade, subject) {
+  const data = state.progress[`${grade}-${subject}`];
+  if (!data) return 0;
+  return Object.values(data.stars).reduce((a,b)=>a+b, 0);
+}
+function isLevelUnlocked(lvl) { if (lvl === 1) return true; return levelCompleted(lvl - 1); }
+function firstUnlocked() { for (let i = 1; i <= 20; i++) if (!levelCompleted(i)) return i; return 20; }
+
+// ============================================================
+// SCREENS
+// ============================================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function selectGrade(g) {
+  state.grade = g;
+  document.getElementById('subjHeader').textContent = g + '年级';
+  const subjects = SUBJECTS_BY_GRADE[g];
+  const grid = document.getElementById('subjectGrid');
+  grid.innerHTML = '';
+  subjects.forEach(sub => {
+    const card = document.createElement('div');
+    card.className = 'subj-card';
+    card.dataset.subj = sub.id;
+    card.onclick = () => selectSubject(sub.id);
+    card.innerHTML = `
+      <span class="sicon">${sub.icon}</span>
+      <div class="sinfo">
+        <h2>${sub.name}</h2>
+        <p>20 关 · 难度递进</p>
+        <div class="sstars" id="${sub.id}Stars">⭐ 0</div>
+      </div>
+      <span class="sarrow">›</span>
+    `;
+    grid.appendChild(card);
+  });
+  updateSubjectProgress();
+  showScreen('screenSubject');
+}
+
+function updateSubjectProgress() {
+  const subjects = SUBJECTS_BY_GRADE[state.grade] || [];
+  subjects.forEach(sub => {
+    const data = state.progress[`${state.grade}-${sub.id}`];
+    const stars = data ? Object.values(data.stars).reduce((a,b)=>a+b, 0) : 0;
+    document.getElementById(sub.id+'Stars').textContent = '⭐ ' + stars;
+  });
+  let totalDone = 0, totalStars = 0;
+  subjects.forEach(sub => {
+    const data = state.progress[`${state.grade}-${sub.id}`];
+    if (data) {
+      totalDone += data.completed.length;
+      totalStars += Object.values(data.stars).reduce((a,b)=>a+b, 0);
+    }
+  });
+  const totalLevels = subjects.length * 20;
+  document.getElementById('totalProgressDisplay').textContent =
+    `📊 ${state.grade}年级 | 已通关 ${totalDone}/${totalLevels} 关 | ⭐ ${totalStars}`;
+}
+
+function selectSubject(subj) {
+  state.subject = subj;
+  document.getElementById('levelHeader').textContent = `${SUBJECT_NAMES[subj]} · ${state.grade}年级`;
+  renderLevels();
+  showScreen('screenLevels');
+}
+
+function renderLevels() {
+  const grid = document.getElementById('levelGrid');
+  grid.innerHTML = '';
+  for (let i = 1; i <= 20; i++) {
+    const btn = document.createElement('div');
+    const completed = levelCompleted(i);
+    const stars = levelStars(i);
+    const unlocked = isLevelUnlocked(i);
+
+    btn.className = 'level-btn';
+    if (!unlocked) btn.classList.add('locked');
+    if (i === firstUnlocked() && unlocked && !completed) btn.classList.add('current');
+
+    let inner = '';
+    if (!unlocked) {
+      inner = `<span class="lock-icon">🔒</span><span class="lvl-num" style="opacity:.4">${i}</span>`;
+    } else if (completed) {
+      const starStr = '⭐'.repeat(stars) + '☆'.repeat(3-stars);
+      inner = `<span class="lvl-num">${i}</span><span class="stars">${starStr}</span>`;
+    } else if (i === firstUnlocked()) {
+      inner = `<span class="lvl-num">${i}</span><span class="stars" style="color:#fff;font-size:11px">START</span>`;
+    } else {
+      inner = `<span class="lvl-num">${i}</span><span class="stars" style="color:#B89578">—</span>`;
+    }
+    btn.innerHTML = inner;
+    if (unlocked) btn.onclick = () => startLevel(i);
+    grid.appendChild(btn);
+  }
+  const done = getLevelData().completed.length;
+  document.getElementById('levelInfo').textContent =
+    `已通关 ${done}/20 关 · ⭐ ${totalStars(state.grade, state.subject)} · 第 1 关最简单`;
+}
+
+// ============================================================
+// GAME
+// ============================================================
+let gameState = {
+  level: 1,
+  questions: [],
+  qIndex: 0,
+  lives: 3,
+  score: 0,
+  correctCount: 0,
+  combo: 0,
+  maxCombo: 0,
+  answered: false,
+  selected: -1,
+  finished: false,
+  answers: [],
+};
+
+function startLevel(lvl) {
+  state.currentLevel = lvl;
+  gameState.level = lvl;
+  gameState.qIndex = 0;
+  gameState.lives = 3;
+  gameState.score = 0;
+  gameState.correctCount = 0;
+  gameState.combo = 0;
+  gameState.maxCombo = 0;
+  gameState.answered = false;
+  gameState.selected = -1;
+  gameState.finished = false;
+  gameState.answers = [];
+
+  gameState.questions = generateQuestions(state.grade, state.subject, lvl);
+
+  document.getElementById('subjectIcon').textContent = SUBJECT_ICONS[state.subject];
+
+  showScreen('screenGame');
+  renderQuestion();
+}
+
+function generateQuestions(grade, subject, level) {
+  if (grade === 2) {
+    if (subject === 'chinese') return genGrade2Chinese(level);
+    if (subject === 'math') return genGrade2Math(level);
+  } else {
+    if (subject === 'chinese') return genGrade6Chinese(level);
+    if (subject === 'math') return genGrade6Math(level);
+    if (subject === 'english') return genGrade6English(level);
+  }
+  return [];
+}
+
+function renderQuestion() {
+  const g = gameState;
+  if (g.qIndex >= g.questions.length || (g.lives <= 0 && g.answered)) {
+    finishLevel();
+    return;
+  }
+  const q = g.questions[g.qIndex];
+  const saved = g.answers[g.qIndex];
+  const isReview = !!saved;
+
+  g.answered = isReview;
+  g.selected = isReview ? saved.selected : -1;
+
+  document.getElementById('qProgress').textContent = `${g.qIndex + 1} / ${g.questions.length}`;
+  document.getElementById('qText').textContent = q.q;
+  const answeredCount = g.answers.filter(a => a !== undefined).length;
+  document.getElementById('progressFill').style.width = `${(answeredCount / g.questions.length) * 100}%`;
+
+  const comboEl = document.getElementById('comboDisplay');
+  if (g.combo > 0) {
+    comboEl.textContent = `🔥 连击 ${g.combo}`;
+    comboEl.classList.remove('zero');
+  } else {
+    comboEl.textContent = `🔥 连击 0`;
+    comboEl.classList.add('zero');
+  }
+
+  document.getElementById('btnPrev').style.display = g.qIndex > 0 ? 'block' : 'none';
+
+  const cont = document.getElementById('optionsContainer');
+  cont.innerHTML = '';
+  q.o.forEach((opt, i) => {
+    const btn = document.createElement('div');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="star-badge">⭐</span>${opt}`;
+    if (isReview) {
+      btn.classList.add('disabled');
+      if (i === q.a) btn.classList.add('correct');
+      if (i === saved.selected && i !== q.a) btn.classList.add('wrong');
+    } else {
+      btn.onclick = () => selectOption(i);
+    }
+    cont.appendChild(btn);
+  });
+
+  // Reveal box (inline answer + explanation)
+  const revealBox = document.getElementById('revealBox');
+  if (isReview) {
+    revealBox.style.display = 'block';
+    const correctText = q.o[q.a];
+    if (saved.isCorrect) {
+      revealBox.className = 'inline-reveal correct';
+      const pts = saved.points || 10;
+      document.getElementById('revealText').innerHTML = `答对啦！+${pts}分 🎉`;
+    } else {
+      revealBox.className = 'inline-reveal wrong';
+      document.getElementById('revealText').innerHTML = `答案是：<span class="correct-ans">${correctText}</span>`;
+    }
+    document.getElementById('revealExplanation').innerHTML = q.e ? `<span class="exp-tag">💡 解析</span>${q.e}` : '';
+  } else {
+    revealBox.style.display = 'none';
+  }
+
+  // Confirm button
+  const confirmBtn = document.getElementById('btnConfirm');
+  if (isReview) {
+    if (g.qIndex < g.questions.length - 1) {
+      confirmBtn.textContent = '下一题 ➜';
+      confirmBtn.onclick = nextQuestion;
+    } else {
+      confirmBtn.textContent = '✅ 完成闯关';
+      confirmBtn.onclick = finishLevel;
+    }
+    confirmBtn.disabled = false;
+  } else {
+    confirmBtn.textContent = '确认答案';
+    confirmBtn.disabled = true;
+    confirmBtn.onclick = confirmAnswer;
+  }
+
+  // Animate
+  const card = document.getElementById('questionCard');
+  card.style.animation = 'none';
+  card.offsetHeight;
+  card.style.animation = 'bounceIn .35s ease';
+}
+
+function selectOption(idx) {
+  if (gameState.answered) return;
+  gameState.selected = idx;
+  document.querySelectorAll('.option-btn').forEach((btn, i) => {
+    btn.classList.toggle('selected', i === idx);
+  });
+  document.getElementById('btnConfirm').disabled = false;
+}
+
+function confirmAnswer() {
+  if (gameState.answered || gameState.selected < 0) return;
+  const g = gameState;
+  const q = g.questions[g.qIndex];
+  const correct = q.a;
+  const isCorrect = g.selected === correct;
+
+  let points = 0;
+  if (isCorrect) {
+    g.combo++;
+    if (g.combo > g.maxCombo) g.maxCombo = g.combo;
+    // 连击加成：基础10分 + 连击奖励（每连击+2分，最高+10）
+    const bonus = Math.min(10, (g.combo - 1) * 2);
+    points = 10 + bonus;
+    g.score += points;
+    g.correctCount++;
+  } else {
+    g.combo = 0;
+    g.lives--;
+  }
+  g.answers[g.qIndex] = { selected: g.selected, isCorrect, points };
+  g.answered = true;
+
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach((btn, i) => {
+    btn.classList.add('disabled');
+    if (i === correct) btn.classList.add('correct');
+    if (i === g.selected && i !== correct) {
+      btn.classList.add('wrong');
+      document.getElementById('questionCard').classList.add('shake');
+      document.getElementById('questionCard').offsetHeight;
+      setTimeout(() => document.getElementById('questionCard').classList.remove('shake'), 400);
+    }
+  });
+  updateStats();
+
+  // Show reveal box
+  const revealBox = document.getElementById('revealBox');
+  revealBox.style.display = 'block';
+  revealBox.style.animation = 'none';
+  revealBox.offsetHeight;
+  revealBox.style.animation = 'fadeIn .35s ease';
+  const correctText = q.o[q.a];
+  if (isCorrect) {
+    revealBox.className = 'inline-reveal correct';
+    document.getElementById('revealText').innerHTML = `答对啦！+${points}分 🎉`;
+  } else {
+    revealBox.className = 'inline-reveal wrong';
+    document.getElementById('revealText').innerHTML = `答案是：<span class="correct-ans">${correctText}</span>`;
+  }
+  document.getElementById('revealExplanation').innerHTML = q.e ? `<span class="exp-tag">💡 解析</span>${q.e}` : '';
+
+  // 命用完 → 延迟后弹出结果
+  if (g.lives <= 0) {
+    setTimeout(finishLevel, 1500);
+    return;
+  }
+
+  // 改成"下一题"
+  const confirmBtn = document.getElementById('btnConfirm');
+  if (g.qIndex < g.questions.length - 1) {
+    confirmBtn.textContent = '下一题 ➜';
+    confirmBtn.onclick = nextQuestion;
+  } else {
+    confirmBtn.textContent = '✅ 完成闯关';
+    confirmBtn.onclick = finishLevel;
+  }
+  confirmBtn.disabled = false;
+
+  document.getElementById('btnPrev').style.display = g.qIndex > 0 ? 'block' : 'none';
+}
+
+function updateStats() {
+  const g = gameState;
+  const answeredCount = g.answers.filter(a => a !== undefined).length;
+  document.getElementById('progressFill').style.width = `${(answeredCount / g.questions.length) * 100}%`;
+  const comboEl = document.getElementById('comboDisplay');
+  if (g.combo > 0) {
+    comboEl.textContent = `🔥 连击 ${g.combo}`;
+    comboEl.classList.remove('zero');
+  } else {
+    comboEl.textContent = `🔥 连击 0`;
+    comboEl.classList.add('zero');
+  }
+}
+
+function nextQuestion() {
+  gameState.qIndex++;
+  renderQuestion();
+}
+
+function prevQuestion() {
+  if (gameState.qIndex <= 0) return;
+  gameState.qIndex--;
+  renderQuestion();
+}
+
+function finishLevel() {
+  const g = gameState;
+  if (g.finished) return;
+  g.finished = true;
+  const total = g.questions.length;
+  const passed = g.correctCount >= Math.ceil(total * 0.6); // 60% to pass
+  const ratio = g.correctCount / total;
+  let stars = 0;
+  if (ratio >= 0.9) stars = 3;
+  else if (ratio >= 0.7) stars = 2;
+  else if (ratio >= 0.6) stars = 1;
+
+  if (passed) {
+    const key = getKey();
+    if (!state.progress[key]) state.progress[key] = { completed: [], stars: {} };
+    const data = state.progress[key];
+    if (!data.completed.includes(g.level)) data.completed.push(g.level);
+    if (!data.stars[g.level] || stars > data.stars[g.level]) data.stars[g.level] = stars;
+    saveProgress();
+  }
+
+  // Modal
+  const modal = document.getElementById('modalOverlay');
+  const emojis = passed
+    ? ['', '', '🎉', '🏆']
+    : ['😢', '😢', '😢', '😢'];
+  document.getElementById('modalEmoji').textContent = passed ? (stars === 3 ? '🏆' : stars === 2 ? '🥳' : '🎉') : '😅';
+
+  if (passed) {
+    document.getElementById('modalTitle').textContent = stars === 3 ? '太棒了！完美通关！' : stars === 2 ? '表现不错！' : '过关啦！';
+  } else {
+    document.getElementById('modalTitle').textContent = '别灰心，再试一次吧！';
+  }
+
+  let starsHtml = '';
+  for (let i = 0; i < 3; i++) {
+    starsHtml += i < stars ? '<span class="filled">⭐</span>' : '☆';
+  }
+  document.getElementById('modalStars').innerHTML = starsHtml;
+
+  document.getElementById('modalScore').textContent = g.score;
+  document.getElementById('modalCorrect').textContent = g.correctCount;
+  document.getElementById('modalTotal').textContent = total;
+
+  const nextBtn = document.getElementById('modalBtnNext');
+  if (passed && g.level < 20) {
+    nextBtn.style.display = 'flex';
+  } else {
+    nextBtn.style.display = passed ? 'flex' : 'none';
+  }
+
+  modal.classList.add('show');
+  if (passed) launchConfetti(stars);
+}
+
+function launchConfetti(stars) {
+  const container = document.createElement('div');
+  container.className = 'confetti-container';
+  document.body.appendChild(container);
+  const colors = ['#FF8C42','#FF6347','#FFB627','#6BCB77','#4A90E2','#FF6B6B'];
+  const count = stars === 3 ? 60 : 30;
+  for (let i = 0; i < count; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = rand(5, 95) + '%';
+    c.style.background = colors[rand(0, colors.length-1)];
+    c.style.width = rand(6, 12) + 'px';
+    c.style.height = rand(6, 12) + 'px';
+    c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    c.style.animationDuration = (rand(15, 30) / 10) + 's';
+    c.style.animationDelay = (rand(0, 20) / 10) + 's';
+    container.appendChild(c);
+  }
+  setTimeout(() => container.remove(), 4000);
+}
+
+function retryLevel() {
+  document.getElementById('modalOverlay').classList.remove('show');
+  startLevel(gameState.level);
+}
+
+function goNextLevel() {
+  document.getElementById('modalOverlay').classList.remove('show');
+  const g = gameState;
+  const passed = g.correctCount >= Math.ceil(g.questions.length * 0.6);
+  if (passed && g.level < 20) {
+    startLevel(g.level + 1);
+  } else if (passed && g.level >= 20) {
+    backToLevels();
+  } else {
+    retryLevel();
+  }
+}
+
+function backToLevels() {
+  document.getElementById('modalOverlay').classList.remove('show');
+  renderLevels();
+  showScreen('screenLevels');
+  updateSubjectProgress();
+}
+
+function confirmQuit() {
+  // 已经答过题，弹出自定义确认框（避免使用浏览器 confirm 在某些环境下失效）
+  if (gameState.qIndex > 0 || gameState.correctCount > 0 || gameState.answers.some(a => a !== undefined)) {
+    document.getElementById('confirmOverlay').classList.add('show');
+  } else {
+    doQuit();
+  }
+}
+
+function closeConfirmQuit() {
+  document.getElementById('confirmOverlay').classList.remove('show');
+}
+
+function doQuit() {
+  document.getElementById('confirmOverlay').classList.remove('show');
+  showScreen('screenLevels');
+}
+
+// ============================================================
+// INIT
+// ============================================================
+loadProgress();
+updateSubjectProgress();
+</script>
+</body>
+</html>
