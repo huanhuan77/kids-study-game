@@ -1276,6 +1276,14 @@ function doQuit() {
 // ============================================================
 loadProgress();
 updateSubjectProgress();
+
+// ============================================================
+// EXPOSE TO WINDOW
+// ============================================================
+// 确保所有 onclick 处理器能访问这些函数（兼容 iframe/sandbox 严格环境）
+['selectGrade','selectSubject','startLevel','showScreen','confirmQuit','prevQuestion',
+ 'confirmAnswer','retryLevel','backToLevels','goNextLevel','closeConfirmQuit','doQuit']
+  .forEach(fn => { window[fn] = eval(fn); });
 </script>
 </body>
 </html>
