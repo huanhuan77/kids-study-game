@@ -411,7 +411,7 @@
       <div class="grade-card" onclick="selectGrade(6)">
         <span class="gicon">🦊</span>
         <div class="ginfo">
-          <h2>六年级</h2>
+          <h2>五年级</h2>
           <p>语文 · 数学 · 英语 共 60 关</p>
         </div>
         <span class="arrow">›</span>
@@ -516,7 +516,7 @@ const SUBJECTS_BY_GRADE = {
     { id: 'chinese', icon: '📜', name: '语文' },
     { id: 'math', icon: '🧮', name: '数学' },
   ],
-  6: [
+  5: [
     { id: 'chinese', icon: '📜', name: '语文' },
     { id: 'math', icon: '🧮', name: '数学' },
     { id: 'english', icon: '🔤', name: '英语' },
@@ -594,139 +594,128 @@ function genGrade2English(level) {
   return getBatch(pool, level, QUESTIONS_PER_LEVEL);
 }
 
-// -------- 六年级 语文 --------
-function genGrade6Chinese(level) {
+// -------- 五年级 语文 --------
+function genGrade5Chinese(level) {
   const pool = [
-    ...[{q:'"画蛇添足"这个成语的意思是？',o:['多此一举','画得好看','蛇很漂亮','添上颜色'],a:0,e:'出自《战国策》，比喻做了多余的事，反而把事情弄糟。'},{q:'"守株待兔"告诉我们什么道理？',o:['不要不劳而获','要爱护动物','要种树','要等兔子'],a:0,e:'《韩非子》寓言，比喻妄想不劳而获，或死守经验。'},{q:'下列哪个成语表示"非常危险"？',o:['千钧一发','风和日丽','春暖花开','一帆风顺'],a:0,e:'千钧一发：千钧重量系在一根头发上，形容情况极其危急。'},{q:'"亡羊补牢"中"亡"的意思是？',o:['丢失','死亡','逃跑','忘记'],a:0,e:'《战国策》："亡"指丢失，"牢"指羊圈，比喻出了问题以后想办法补救。'},{q:'"刻舟求剑"讽刺了什么样的人？',o:['不懂变通的人','会刻字的人','会划船的人','会求剑的人'],a:0,e:'《吕氏春秋》寓言，讽刺墨守成规、不知变通的人。'},{q:'"叶公好龙"中"好"的意思是？',o:['喜欢','好处','很好','友好'],a:0,e:'汉代刘向《新序》，讽刺表里不一的人，表面喜欢实际害怕。'}],
+    // L1-5: 成语 & 词语
+    ...[{q:'"画蛇添足"这个成语的意思是？',o:['多此一举','画得好看','蛇很漂亮','添上颜色'],a:0,e:'比喻做了多余的事，反而把事情弄糟。'},{q:'"守株待兔"告诉我们什么道理？',o:['不要不劳而获','要爱护动物','要种树','要等兔子'],a:0,e:'比喻妄想不劳而获，死守狭隘经验。'},{q:'"亡羊补牢"的意思是？',o:['出了错要及时补救','羊丢了不用管','要多养羊','修好羊圈'],a:0,e:'丢失了羊再去修补羊圈，比喻出了问题以后想办法补救。'},{q:'"刻舟求剑"讽刺了什么样的人？',o:['不懂变化的人','会刻字的人','会划船的人','会求剑的人'],a:0,e:'不知道事情已经变化了，还是用老办法，讽刺不会变通的人。'},{q:'"掩耳盗铃"的意思是？',o:['自己骗自己','偷铃铛','保护耳朵','大声说话'],a:0,e:'捂住自己的耳朵去偷铃铛，比喻自己欺骗自己。'},{q:'"对牛弹琴"用来讽刺？',o:['说话不看对象','弹琴给牛听','牛喜欢音乐','弹琴很好听'],a:0,e:'比喻对不懂道理的人讲道理，说话不看对象。'}],
 
-    ...[{q:'"随风潜入夜"下一句是？',o:['润物细无声','当春乃发生','好雨知时节','花重锦官城'],a:0,e:'杜甫《春夜喜雨》：润物细无声，形容春雨默默滋润万物。'},{q:'"谁言寸草心"下一句是？',o:['报得三春晖','疑是地上霜','处处闻啼鸟','粒粒皆辛苦'],a:0,e:'孟郊《游子吟》：比喻子女难以报答母亲的深恩。'},{q:'"春风又绿江南岸"中"绿"字的妙处在于？',o:['化静为动，写出春意','写出了颜色','写出了绿色','写出了风景'],a:0,e:'王安石反复推敲，将形容词"绿"作动词用，使春风有了生机。'},{q:'"但愿人长久"下一句是？',o:['千里共婵娟','低头思故乡','月有阴晴圆缺','此事古难全'],a:0,e:'苏轼《水调歌头》：但愿人长久，千里共婵娟。'},{q:'"粉骨碎身浑不怕"出自哪首诗？',o:['石灰吟','竹石','墨梅','己亥杂诗'],a:0,e:'于谦《石灰吟》，表达为国尽忠、不怕牺牲的志向。'},{q:'"千磨万击还坚劲"描写的是？',o:['竹子','梅花','石头','松树'],a:0,e:'郑燮《竹石》：千磨万击还坚劲，任尔东西南北风，赞美竹的坚韧。'}],
+    // L6-10: 古诗
+    ...[{q:'"春风又绿江南岸"出自哪位诗人？',o:['王安石','李白','杜甫','白居易'],a:0,e:'王安石《泊船瓜洲》：春风又绿江南岸，明月何时照我还。'},{q:'"洛阳城里见秋风"下一句是？',o:['欲作家书意万重','每逢佳节倍思亲','春风不度玉门关','万里长征人未还'],a:0,e:'张籍《秋思》：洛阳城里见秋风，欲作家书意万重。'},{q:'"明月有情应识我"下一句是？',o:['年年相见在他乡','低头思故乡','月是故乡明','千里共婵娟'],a:0,e:'袁枚《随园诗话》：明月有情应识我，年年相见在他乡。'},{q:'"牧童骑黄牛"下一句是？',o:['歌声振林樾','归来饱饭黄昏后','不脱蓑衣卧月明','怕得鱼惊不应人'],a:0,e:'袁枚《所见》：牧童骑黄牛，歌声振林樾。'},{q:'"独在异乡为异客"出自哪首诗？',o:['九月九日忆山东兄弟','静夜思','泊船瓜洲','秋思'],a:0,e:'王维《九月九日忆山东兄弟》：独在异乡为异客，每逢佳节倍思亲。'},{q:'"遥知兄弟登高处"下一句是？',o:['遍插茱萸少一人','每逢佳节倍思亲','独在异乡为异客','春风不度玉门关'],a:0,e:'王维：遥知兄弟登高处，遍插茱萸少一人。'}],
 
-    ...[{q:'下列哪个是设问句？',o:['这是谁的书？这是我的书。','这是谁的书？','这是我的书。','书是谁的？'],a:0,e:'设问是自问自答，"这是谁的书？这是我的书"为自问自答。'},{q:'"太阳像一个大火球。"用了什么修辞？',o:['比喻','拟人','夸张','排比'],a:0,e:'把太阳比作大火球，是明喻（本体+喻体+喻词"像"）。'},{q:'"他跑得真快啊！"表达了什么语气？',o:['感叹','疑问','陈述','祈使'],a:0,e:'句末"啊"和感叹号表示强烈情感，是感叹句。'},{q:'下列句子中有语病的是？',o:['我昨天去了公园玩。','我玩去了公园昨天。','昨天我去了公园玩。','我去公园玩了昨天。'],a:1,e:'"我玩去了公园昨天"语序混乱，时间状语应放动词前。'},{q:'"这座桥有五十年的历史了。"缩句正确的是？',o:['桥有历史。','这座桥有历史。','桥有五十年历史。','这座桥有五十年的历史。'],a:0,e:'缩句保留主语"桥"、谓语"有"、宾语"历史"，去掉修饰词。'},{q:'"他不仅学习好，而且品德好。"是什么关系的复句？',o:['递进','并列','转折','因果'],a:0,e:'"不仅……而且……"关联词表示递进关系，后比前更进一层。'}],
+    // L11-15: 修辞 & 句型
+    ...[{q:'"月亮像弯弯的小船。"用了什么修辞？',o:['比喻','拟人','夸张','排比'],a:0,e:'把月亮比作小船，有喻词"像"，是明喻。'},{q:'"风儿轻轻地抚摸着我的脸。"用了什么修辞？',o:['拟人','比喻','夸张','排比'],a:0,e:'把风当作人来写（抚摸），是拟人。'},{q:'"教室里静得连针掉在地上都听得见。"用了什么修辞？',o:['夸张','比喻','拟人','排比'],a:0,e:'故意夸大"静"的程度，是夸张的修辞手法。'},{q:'下列句子中是陈述句的是？',o:['今天天气真好。','今天天气真好？','今天天气真好！','今天天气好吗？'],a:0,e:'陈述句是陈述事实的句子，用句号结尾。'},{q:'"这座桥有五十年的历史了。"缩句正确的是？',o:['桥有历史。','这座桥有历史。','桥有五十年历史。','这座桥有五十年的历史。'],a:0,e:'缩句保留主谓宾：桥有历史，去掉修饰成分"五十年的"。'},{q:'"因为天下雨了，所以运动会取消了。"是什么关系的句子？',o:['因果','并列','转折','递进'],a:0,e:'"因为……所以……"表示因果关系。'}],
 
-    ...[{q:'"为是其智弗若与？"中"为"的意思是？',o:['因为','为了','成为','作为'],a:0,e:'《孟子·告子上》：为，同"谓"，这里是"因为"。'},{q:'"思援弓缴而射之"中"之"指代的是？',o:['天鹅','弓','箭','人'],a:0,e:'《孟子》：之指代前文的"天鹅"（鸿鹄）。'},{q:'"两小儿辩日"中两个小孩争论的是？',o:['太阳远近','太阳大小','太阳颜色','太阳温度'],a:0,e:'《列子·汤问》：一儿说日出时近，日中时远；另一儿观点相反。'},{q:'"孰为汝多知乎？"这句话的意思是？',o:['谁说你知识渊博呢？','谁说你很多知识？','谁说你知道得多？','谁让你知道得多？'],a:0,e:'《两小儿辩日》：孔子被小儿反问"谁说你的知识渊博呢？"。'},{q:'"学弈"这则故事告诉我们？',o:['学习要专心致志','学下棋很难','两个人学不好','老师很重要'],a:0,e:'《孟子·告子上》：两人学弈，一人专心致志，一人三心二意，结果不同。'},{q:'"弗若"的意思是？',o:['不如','不是','不会','不要'],a:0,e:'弗：不；若：如同。弗若：不如。'}],
-
-    ...[{q:'"锲而不舍"中"锲"的意思是？',o:['雕刻','放弃','坚持','努力'],a:0,e:'《荀子·劝学》：锲：用刀刻。锲而不舍：不停地刻，比喻坚持不懈。'},{q:'"有朋自远方来"下一句是？',o:['不亦乐乎','不亦说乎','不亦君子乎','人不知而不愠'],a:0,e:'《论语·学而》：有朋自远方来，不亦乐乎？'},{q:'"见贤思齐焉"中"齐"的意思是？',o:['看齐','整齐','一起','齐全'],a:0,e:'《论语·里仁》：齐，看齐。见贤思齐：看到德才兼备的人就想赶上他。'},{q:'"己所不欲"下一句是？',o:['勿施于人','勿以善小而不为','勿以恶小而为之','施于人'],a:0,e:'《论语·卫灵公》：己所不欲，勿施于人。'},{q:'"温故而知新"告诉我们？',o:['复习旧知识能获得新理解','学习要温习','要学新知识','要记住旧知识'],a:0,e:'《论语·为政》：温习旧知识，能悟出新的道理。'},{q:'"学而不思则罔"中"罔"的意思是？',o:['迷惑','没有','网络','罔然'],a:0,e:'《论语·为政》：罔：迷惑，茫然无所得。只学习不思考就会迷茫。'}],
+    // L16-20: 综合阅读
+    ...[{q:'"津津有味"的"津津"是什么意思？',o:['有滋味、有趣味','口水','汗水','味道'],a:0,e:'津津：形容有滋味或有趣味。"津津有味"指吃得很有味道或谈得很有兴趣。'},{q:'"安然无恙"的"恙"是什么意思？',o:['疾病、灾祸','健康','快乐','安全'],a:0,e:'恙：疾病、灾祸。安然无恙：平安没有受到损害。'},{q:'"不可思议"的意思是？',o:['难以想象、无法理解','不可以思考','可以商量','没有意义'],a:0,e:'指无法想象，难以理解，形容事物或言论无法想象。'},{q:'"月亮挂在天空"这句话中"挂"字用了什么修辞？',o:['拟人','比喻','夸张','排比'],a:0,e:'"挂"字将月亮当作可以挂的东西来写，赋予人的动作，是拟人。'},{q:'"我劝天公重抖擞"下一句是？',o:['不拘一格降人才','不拘一格降人材','我劝天公再努力','不拘一格选人才'],a:0,e:'龚自珍《己亥杂诗》：我劝天公重抖擞，不拘一格降人才。'},{q:'"黑发不知勤学早"下一句是？',o:['白首方悔读书迟','白首方知读书晚','老来方悔读书迟','少壮不努力老大徒伤悲'],a:0,e:'颜真卿《劝学》：黑发不知勤学早，白首方悔读书迟。'}],
   ];
   return getBatch(pool, level, QUESTIONS_PER_LEVEL);
 }
 
-// -------- 六年级 数学 --------
-function genGrade6Math(level) {
+// -------- 五年级 数学 --------
+function genGrade5Math(level) {
   const qs = [];
   for (let i = 0; i < QUESTIONS_PER_LEVEL; i++) {
     let q, opts, answer, ansIdx, expl;
     if (level <= 5) {
-      const op = ['+','-','×'][rand(0,2)];
+      // 小数加减乘除
+      const op = ['+','-','×','÷'][rand(0,3)];
       let a, b;
-      if (op === '+') { a = rand(100, 999); b = rand(100, 999); q = `${a} + ${b} = ?`; answer = a + b; expl = `${a} + ${b} = ${answer}`; }
-      else if (op === '-') { a = rand(200, 999); b = rand(100, a-1); q = `${a} - ${b} = ?`; answer = a - b; expl = `${a} - ${b} = ${answer}`; }
-      else { a = rand(12, 99); b = rand(2, 9); q = `${a} × ${b} = ?`; answer = a * b; expl = `${a} × ${b} = ${answer}`; }
+      if (op === '+') {
+        a = parseFloat((rand(10, 99)).toFixed(1)); b = parseFloat((rand(10, 99)).toFixed(1));
+        answer = parseFloat((a + b).toFixed(1)); q = `${a} + ${b} = ?`;
+        expl = `${a} + ${b} = ${answer}`;
+      } else if (op === '-') {
+        a = parseFloat((rand(20, 99)).toFixed(1)); b = parseFloat((rand(10, a-1)).toFixed(1));
+        answer = parseFloat((a - b).toFixed(1)); q = `${a} - ${b} = ?`;
+        expl = `${a} - ${b} = ${answer}`;
+      } else if (op === '×') {
+        a = parseFloat((rand(1, 20)/10).toFixed(1)); b = rand(2, 9);
+        answer = parseFloat((a * b).toFixed(2)); q = `${a} × ${b} = ?`;
+        expl = `${a} × ${b} = ${answer}`;
+      } else {
+        a = rand(10, 99); b = rand(2, 9);
+        answer = parseFloat((a / b).toFixed(2)); q = `${a} ÷ ${b} ≈ ?（保留两位小数）`;
+        expl = `${a} ÷ ${b} ≈ ${answer}`;
+      }
       const gen = generateOptions(answer);
       opts = gen.opts; ansIdx = gen.ansIdx;
     } else if (level <= 10) {
-      const fracQ = genFractionQ();
-      q = fracQ.q; opts = fracQ.o; ansIdx = fracQ.a;
-      expl = fracQ.e;
-    } else if (level <= 15) {
-      if (i % 2 === 0) {
-        const a = rand(10, 99); const b = rand(10, 99);
-        const c = parseFloat((a / b).toFixed(1));
-        q = `${a} ÷ ${b} ≈ ?（保留一位小数）`;
-        answer = c;
-        const gen = generateOptions(answer);
-        opts = gen.opts; ansIdx = gen.ansIdx;
-        expl = `${a} ÷ ${b} = ${(a/b).toFixed(2)}，保留一位小数 ≈ ${c}`;
+      // 分数加减法
+      const op = ['+','-'][rand(0,1)];
+      const d = rand(2, 9);
+      let n1, n2;
+      if (op === '+') {
+        n1 = rand(1, d-1); n2 = rand(1, d-1);
+        const rn = n1 + n2; const rd = d;
+        const g = gcd(rn, rd);
+        answer = `${rn/g}/${rd/g}`;
+        q = `${n1}/${d} + ${n2}/${d} = ?`;
+        expl = `${n1}/${d} + ${n2}/${d} = ${rn}/${rd} ≈ ${(rn/rd).toFixed(2)}`;
       } else {
-        const pct = Math.floor(Math.random() * 100) + 1;
-        const num = Math.floor(Math.random() * 200) + 50;
-        q = `${pct}% 的 ${num} 是多少？`;
-        answer = Math.round(num * pct / 100);
-        const gen = generateOptions(answer);
-        opts = gen.opts; ansIdx = gen.ansIdx;
-        expl = `${pct}% × ${num} = ${pct*num/100} ≈ ${answer}`;
+        n1 = rand(2, d-1); n2 = rand(1, n1);
+        const rn = n1 - n2;
+        if (rn === 0) { n1 = rand(3, d-1); n2 = rand(1, n1-1); }
+        const rn2 = n1 - n2; const g2 = gcd(rn2, d);
+        answer = `${rn2/g2}/${d/g2}`;
+        q = `${n1}/${d} - ${n2}/${d} = ?`;
+        expl = `${n1}/${d} - ${n2}/${d} = ${rn2}/${d} ≈ ${(rn2/d).toFixed(2)}`;
       }
-    } else {
-      if (i < 4) {
-        const x = rand(2, 20);
-        const coef = rand(2, 9);
-        const c2 = rand(1, 20);
+      const gen = generateOptions(answer);
+      opts = gen.opts; ansIdx = gen.ansIdx;
+    } else if (level <= 15) {
+      // 简易方程
+      const x = rand(2, 15);
+      const coef = rand(2, 6);
+      const c2 = rand(1, 15);
+      if (i % 2 === 0) {
         const result = coef * x + c2;
         q = `解方程：${coef}x + ${c2} = ${result}，x = ?`;
         answer = x;
-        const gen = generateOptions(answer);
-        opts = gen.opts; ansIdx = gen.ansIdx;
-        expl = `${coef}x = ${result} - ${c2} = ${result-c2}，所以 x = ${answer}`;
+        expl = `${coef}x = ${result} - ${c2} = ${result-c2}，x = ${answer}`;
       } else {
-        const r = rand(3, 10);
-        const area = Math.round(Math.PI * r * r * 10) / 10;
-        q = `圆的半径 r = ${r}，面积 = ?（π≈3.14）`;
-        answer = area;
-        const gen = generateOptions(answer);
-        opts = gen.opts; ansIdx = gen.ansIdx;
-        expl = `面积 = π × r² = 3.14 × ${r}² ≈ ${area}`;
+        const result = coef * x - c2;
+        q = `解方程：${coef}x - ${c2} = ${result}，x = ?`;
+        answer = x;
+        expl = `${coef}x = ${result} + ${c2} = ${result+c2}，x = ${answer}`;
       }
+      const gen = generateOptions(answer);
+      opts = gen.opts; ansIdx = gen.ansIdx;
+    } else {
+      // 多边形面积
+      if (i < 3) {
+        const base = rand(4, 12); const height = rand(3, 10);
+        const area = 0.5 * base * height;
+        q = `三角形底 = ${base}，高 = ${height}，面积 = ?`;
+        answer = area;
+        expl = `面积 = 底 × 高 ÷ 2 = ${base} × ${height} ÷ 2 = ${area}`;
+      } else {
+        const base = rand(4, 12); const height = rand(3, 10);
+        const area = base * height;
+        q = `平行四边形底 = ${base}，高 = ${height}，面积 = ?`;
+        answer = area;
+        expl = `面积 = 底 × 高 = ${base} × ${height} = ${area}`;
+      }
+      const gen = generateOptions(answer);
+      opts = gen.opts; ansIdx = gen.ansIdx;
     }
     qs.push({ q, o: opts, a: ansIdx, e: expl });
   }
   return qs;
 }
 
-function genFractionQ() {
-  const denom = rand(2, 9);
-  let num = rand(1, denom-1);
-  const simp = gcd(num, denom);
-  num /= simp; const d2 = denom / simp;
-  const op = ['+','-'][rand(0,1)];
-  const n2 = rand(1, 5);
-  let resultNum, resultDen;
-  if (op === '+') {
-    resultNum = num * n2 + d2;
-    resultDen = d2 * n2;
-  } else {
-    if (num/d2 < 1/n2) {
-      resultNum = d2 - num * n2;
-      resultDen = d2 * n2;
-    } else {
-      resultNum = num * n2 - d2;
-      resultDen = d2 * n2;
-    }
-    if (resultNum === 0) resultNum = 1;
-  }
-  const g = gcd(Math.abs(resultNum), resultDen);
-  resultNum /= g; resultDen /= g;
-  const q = `${num}/${d2} ${op} 1/${n2} = ?`;
-  const answer = `${resultNum}/${resultDen}`;
-  const opts = [
-    answer,
-    `${resultNum+1}/${resultDen}`,
-    `${resultNum}/${resultDen+2}`,
-    `${Math.max(1,resultNum-1)}/${resultDen}`,
-  ];
-  const idx = Array.from({length:4},(_,i)=>i);
-  shuffle(idx);
-  const shuffled = idx.map(i=>opts[i]);
-  const ansIdxShuffled = idx.indexOf(0);
-  let expl;
-  if (op === '+') {
-    expl = `通分：${num}/${d2} = ${num*n2}/${d2*n2}，1/${n2} = ${d2}/${d2*n2}，相加得 ${num*n2+d2}/${d2*n2} = ${answer}`;
-  } else {
-    expl = `通分：${num}/${d2} = ${num*n2}/${d2*n2}，1/${n2} = ${d2}/${d2*n2}，相减得 ${Math.abs(num*n2-d2)}/${d2*n2} = ${answer}`;
-  }
-  return { q, o: shuffled, a: ansIdxShuffled, e: expl };
-}
-
-// -------- 六年级 英语 --------
-function genGrade6English(level) {
+// -------- 五年级 英语 --------
+function genGrade5English(level) {
   const pool = [
-    ...[{q:'"重要的"英文是？',o:['important','interesting','impossible','impressive'],a:0,e:'important /ɪmˈpɔːrtnt/ adj.重要的'},{q:'"Yesterday I ___ to the park."',o:['went','go','gone','going'],a:0,e:'Yesterday提示过去时，go的过去式是went。'},{q:'"She is ___ than her sister."',o:['taller','tall','tallest','more tall'],a:0,e:'than是比较级标志，tall的比较级是taller。'},{q:'"Have you ever ___ to Beijing?"',o:['been','be','being','was'],a:0,e:'Have you ever + 过去分词，been是be的过去分词。'},{q:'"What ___ you do yesterday?"',o:['did','do','does','doing'],a:0,e:'yesterday提示一般过去时，助动词用did。'},{q:'"environment"的意思是？',o:['环境','娱乐','入口','装备'],a:0,e:'environment /ɪnˈvaɪrənmənt/ n.环境'},{q:'"He is interested ___ music."',o:['in','on','at','for'],a:0,e:'be interested in... 对……感兴趣，固定搭配。'},{q:'"I have been studying English ___ three years."',o:['for','since','in','during'],a:0,e:'for + 一段时间，since + 时间起点。'}],
+    ...[{q:'"通常"的英文是？',o:['usually','always','often','sometimes'],a:0,e:'usually /ˈjuːʒuəli/ adv.通常'},{q:'"She ___ breakfast at 7 o\'clock."',o:['has','have','having','had'],a:0,e:'主语She是第三人称单数，动词用has。'},{q:'"I ___ a student."',o:['am','is','are','be'],a:0,e:'I后面be动词用am。'},{q:'"They are ___ (play) football now."',o:['playing','play','plays','played'],a:0,e:'now表示现在进行时：be + doing。'},{q:'"What ___ do you like?" 填颜色',o:['colour','food','sport','animal'],a:0,e:'colour意为颜色，what colour问什么颜色。'},{q:'"Can you swim?" — ___, I can.',o:['Yes','No','Sorry','OK'],a:0,e:'肯定回答：Yes, I can. 否定：No, I can\'t.'},{q:'"teacher"的意思是？',o:['老师','医生','司机','农民'],a:0,e:'teacher /ˈtiːtʃər/ n.老师'},{q:'"This is ___ apple." 用a还是an？',o:['an','a','the','/'],a:0,e:'apple以元音开头，不定冠词用an。'}],
 
-    ...[{q:'"If it rains tomorrow, I ___ at home."',o:['will stay','stay','stayed','am staying'],a:0,e:'主从复合句：主句用一般将来时 will + 动词原形。'},{q:'"The book ___ is on the table is mine."',o:['which','who','whom','whose'],a:0,e:'先行词是物（book），关系代词用which。'},{q:'"Congratulations!"的意思是？',o:['祝贺你','对不起','谢谢你','没关系'],a:0,e:'Congratulations /kənˌɡrætʃuˈleɪʃənz/ 祝贺你'},{q:'"Neither he nor I ___ right."',o:['am','is','are','be'],a:0,e:'Neither...nor...连接主语时，谓语遵循"就近原则"，靠近I所以用am。'},{q:'"By the time I arrived, she ___ left."',o:['had','has','have','was'],a:0,e:'过去完成时：过去的过去。到达时她已离开，用had left。'},{q:'"I used to ___ early."',o:['get up','getting up','got up','gets up'],a:0,e:'used to + 动词原形表示过去常常做某事。'},{q:'"communication"的意思是？',o:['交流','竞赛','社区','命令'],a:0,e:'communication /kəˌmjuːnɪˈkeɪʃn/ n.交流，沟通'},{q:'"Would you mind ___ the window?"',o:['opening','open','opened','to open'],a:0,e:'mind后接动名词doing，表"介意做某事"。'}],
+    ...[{q:'"I go to school ___ bus."',o:['by','on','in','take'],a:0,e:'by bus：乘公交车。固定搭配。'},{q:'"She likes ___ (read) books."',o:['reading','read','reads','readed'],a:0,e:'like doing sth：喜欢做某事。'},{q:'"星期六"的英文是？',o:['Saturday','Sunday','Monday','Friday'],a:0,e:'Saturday /ˈsætərdeɪ/ n.星期六'},{q:'"我每天早上六点起床。"的翻译是？',o:['I get up at six every morning.','I at six get up every morning.','I get up every morning at six o\'clock.','Every morning I six get up.'],a:0,e:'英语语序：I get up at six every morning.'},{q:'"There ___ a book on the desk."',o:['is','are','am','be'],a:0,e:'a book是单数，There后用is。'},{q:'"How many ___ do you have?"',o:['books','book','bookes','book\'s'],a:0,e:'How many后接可数名词复数。'},{q:'"大象"的英文是？',o:['elephant','tiger','lion','bear'],a:0,e:'elephant /ˈelɪfənt/ n.大象'},{q:'"Look! The boys ___ in the river."',o:['are swimming','swim','swims','swimming'],a:0,e:'Look提示现在进行时，be动词+doing。'}],
 
-    ...[{q:'"Not only he but also I ___ wrong."',o:['am','is','are','be'],a:0,e:'not only...but also...连接主语时，谓语动词遵循"就近原则"，靠近I所以用am。'},{q:'"I wish I ___ fly."',o:['could','can','will','would'],a:0,e:'wish后用虚拟语气，表示与现在事实相反用could/would。'},{q:'"The more you read, ___ you will learn."',o:['the more','more','most','the most'],a:0,e:'固定搭配"the more...the more..."越……越……。'},{q:'"He is too young ___ go to school."',o:['to','for','in','at'],a:0,e:'固定搭配"too...to..."太……以至于不能……。'},{q:'"She asked me where I ___."',o:['lived','live','living','lives'],a:0,e:'宾语从句用陈述句语序，且主句是过去式，从句也用过去式。'},{q:'"through"和"across"的区别是？',o:['through穿越内部，across横跨表面','一样','through是介词，across是副词','没有区别'],a:0,e:'through表示"穿过内部"，across表示"横跨表面"。'},{q:'"I have a lot of homework ___."',o:['to do','doing','done','do'],a:0,e:'不定式作定语表示"有待做的作业"。'},{q:'"He was ___ tired that he fell asleep."',o:['so','such','too','very'],a:0,e:'固定句型"so...that..."如此……以至于……。'}],
+    ...[{q:'"My father is a doctor." 对doctor提问？',o:['What does your father do?','What is your father?','Who is your father?','Where is your father?'],a:0,e:'对职业提问用"What + do/does + 主语 + do?"或"What + be + 主语?"。'},{q:'"He ___ to school every day."',o:['goes','go','going','went'],a:0,e:'He是第三人称单数，一般现在时动词加es。'},{q:'"十一月"的英文是？',o:['November','September','October','December'],a:0,e:'November /noʊˈvembər/ n.十一月'},{q:'"I\'d like some ___." (我想吃些米饭)',o:['rice','rices','a rice','rice\'s'],a:0,e:'rice是物质名词，不可数，没有复数形式。'},{q:'"This book is ___ than that one."',o:['bigger','big','biggest','more big'],a:0,e:'than是比较级标志，big是重读闭音节，双写g加er。'},{q:'"你来自哪里？"的英语是？',o:['Where are you from?','Where do you from?','Where are you come from?','From where are you?'],a:0,e:'Where + be + 主语 + from? 询问来自哪里。'},{q:'"happy"的最高级是？',o:['happiest','happyest','most happy','happyer'],a:0,e:'happy以y结尾，变y为i加est：happiest。'},{q:'"Don\'t ___ (run) in the classroom."',o:['run','running','runs','ran'],a:0,e:'祈使句的否定：Don\'t + 动词原形。'}],
 
-    ...[{q:'"尽管"的英文是？',o:['although','because','so','therefore'],a:0,e:'although意为"尽管"，引导让步状语从句。'},{q:'"She runs fast, ___ she?" 的反意疑问？',o:["doesn't she",'does she','isn\'t she','has she'],a:0,e:'反意疑问句：前肯后否。前肯定则疑问部分否定。'},{q:'"___ interesting the story is!" 感叹句首词？',o:['How','What','What a','What an'],a:0,e:'感叹句：修饰形容词用How，修饰名词用What。'},{q:'"I prefer reading ___ watching TV."',o:['to','than','over','from'],a:0,e:'prefer A to B：喜欢A胜过B，固定搭配。'},{q:'"The movie ___ already started when we arrived."',o:['had','has','have','was'],a:0,e:'过去完成时had done表示"过去的过去"，到达时电影已开始。'},{q:'"education"的意思是？',o:['教育','娱乐','电子','编辑'],a:0,e:'education /ˌɛdʒʊˈkeɪʃən/ n.教育'},{q:'"He succeeded ___ hard work."',o:['through','by','with','in'],a:0,e:'succeed through... 通过……取得成功。'},{q:'"His arrival made us happy." 中 arrival 是？',o:['名词','动词','形容词','副词'],a:0,e:'arrive是动词，名词形式为arrival。'}],
+    ...[{q:'"我擅长画画。"的翻译是？',o:['I am good at drawing.','I am good at draw.','I good at drawing.','I am good in drawing.'],a:0,e:'be good at + doing：擅长做某事。'},{q:'"He can speak Chinese ___." (很好地)',o:['well','good','nice','fine'],a:0,e:'修饰动词speak要用副词well。'},{q:'"十二"的英文是？',o:['twelve','twentieth','twelveth','twenty'],a:0,e:'twelve /twelv/ num.十二'},{q:'"She is ___ than her sister." (更矮)',o:['shorter','short','shortest','more short'],a:0,e:'than是比较级，short的比较级是shorter。'},{q:'"I want ___ (be) a teacher."',o:['to be','be','being','am'],a:0,e:'want to do sth：想要做某事。'},{q:'"What\'s the weather like?" 的意思是？',o:['天气怎么样？','你叫什么？','几点了？','你做什么？'],a:0,e:'What\'s the weather like? 常用于询问天气。'},{q:'"母亲节"的英文是？',o:["Mother's Day",'Mothers Day','Mother Day','Mother\'s day'],a:0,e:"Mother's Day：母亲节（每个母亲都有自己的节日，用单数所有格）。"},{q:'"Let\'s ___ (go) to the park."',o:['go','going','goes','went'],a:0,e:'Let\'s + 动词原形：让我们做某事。'}],
 
-    ...[{q:'"It is high time you ___ to bed."',o:['went','go','going','have gone'],a:0,e:'固定句型"It is (high) time + 过去时"表示该做某事了。'},{q:'"No sooner had he arrived ___ it began to rain."',o:['than','when','then','before'],a:0,e:'固定搭配"No sooner...than..."一……就……。'},{q:'"Hardly ___ I finished when he came."',o:['had','have','has','did'],a:0,e:'固定搭配"Hardly had...when..."几乎还没……就……。'},{q:'"scarcely"的反义词是？',o:['abundantly','hardly','barely','rarely'],a:0,e:'scarcely意为"几乎不"，反义词abundantly意为"充足地"。'},{q:'"既是……又是……" 的英语关联词？',o:['both...and...','either...or...','neither...nor...','not only...but also...'],a:0,e:'both...and...表示"两者都……"，表示双重身份。'},{q:'"The novel ___ is well worth reading."',o:['itself','himself','herself','myself'],a:0,e:'反身代词强调"它自己"——这本书本身就值得一读。'},{q:'"Take ___ umbrella in case it rains."',o:['an','a','the','/'],a:0,e:'umbrella以元音/u/开头，不定冠词用an。'},{q:'"punctual"的意思是？',o:['准时的','礼貌的','美丽的','积极的'],a:0,e:'punctual /ˈpʌŋktʃuəl/ adj.准时的，守时的。'}],
+    ...[{q:'"Spring ___ (come) after winter."',o:['comes','come','coming','came'],a:0,e:'Spring是第三人称单数，一般现在时用comes。'},{q:'"Tom is ___ (tall) boy in his class."',o:['the tallest','tallest','taller','most tall'],a:0,e:'in his class是比较范围，最高级前加the。'},{q:'"图书馆"的英文是？',o:['library','bookstore','hospital','supermarket'],a:0,e:'library /ˈlaɪbreri/ n.图书馆'},{q:'"Would you like ___ tea?"',o:['some','any','a','many'],a:0,e:'Would you like 是礼貌询问，用some表示希望得到肯定回答。'},{q:'"He usually ___ (watch) TV in the evening."',o:['watches','watch','watching','watched'],a:0,e:'He是第三人称单数，watch加es。'},{q:'"turn left"的意思是？',o:['左转','右转','掉头','直走'],a:0,e:'turn left 左转，turn right 右转，go straight 直走。'},{q:'"Children\'s Day"是哪一天？',o:['六月一日','十月一日','一月一日','五月一日'],a:0,e:"Children's Day：儿童节（六月一日）。"},{q:'"Tom is good at football, and Mike is good at football ___."(也)',o:['too','also','either','to'],a:0,e:'肯定句句末用too表示"也"。also在句中。'}],
   ];
   return getBatch(pool, level, QUESTIONS_PER_LEVEL);
 }
@@ -955,9 +944,9 @@ function generateQuestions(grade, subject, level) {
     if (subject === 'chinese') return genGrade2Chinese(level);
     if (subject === 'math') return genGrade2Math(level);
   } else {
-    if (subject === 'chinese') return genGrade6Chinese(level);
-    if (subject === 'math') return genGrade6Math(level);
-    if (subject === 'english') return genGrade6English(level);
+    if (subject === 'chinese') return genGrade5Chinese(level);
+    if (subject === 'math') return genGrade5Math(level);
+    if (subject === 'english') return genGrade5English(level);
   }
   return [];
 }
