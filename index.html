@@ -408,7 +408,7 @@
         </div>
         <span class="arrow">›</span>
       </div>
-      <div class="grade-card" onclick="selectGrade(6)">
+      <div class="grade-card" onclick="selectGrade(5)">
         <span class="gicon">🦊</span>
         <div class="ginfo">
           <h2>五年级</h2>
@@ -813,9 +813,14 @@ function showScreen(id) {
 function selectGrade(g) {
   state.grade = g;
   document.getElementById('subjHeader').textContent = g + '年级';
-  const subjects = SUBJECTS_BY_GRADE[g];
+  const subjects = SUBJECTS_BY_GRADE[g] || [];
   const grid = document.getElementById('subjectGrid');
   grid.innerHTML = '';
+  if (subjects.length === 0) {
+    grid.innerHTML = '<div style="color:#888;padding:30px;text-align:center">该年级暂未开放</div>';
+    showScreen('screenSubject');
+    return;
+  }
   subjects.forEach(sub => {
     const card = document.createElement('div');
     card.className = 'subj-card';
