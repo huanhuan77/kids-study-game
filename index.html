@@ -498,7 +498,7 @@
   <div class="modal-box confirm-box">
     <div class="big-emoji">🤔</div>
     <h2 id="confirmTitle">确定要退出吗？</h2>
-    <div class="confirm-msg">已答题进度不会保存哦～</div>
+    <div class="confirm-msg">已答题成绩会自动保存哦 🏆</div>
     <div class="modal-buttons">
       <button class="btn-pick" onclick="closeConfirmQuit()">继续答题</button>
       <button class="btn-retry" onclick="doQuit()">确认退出</button>
@@ -1281,7 +1281,30 @@ function closeConfirmQuit() {
 
 function doQuit() {
   document.getElementById('confirmOverlay').classList.remove('show');
+  // 保存已答题记录
+  const g = gameState;
+  if (g && g.answers && g.answers.some(a => a !== undefined)) {
+    const total = g.questions.length;
+    const correctCount = g.correctCount || g.answers.filter(a => a && a.isCorrect).length;
+    const passed = correctCount >= Math.ceil(total * 0.6);
+    const ratio = correctCount / total;
+    let stars = 0;
+    if (ratio >= 0.9) stars = 3;
+    else if (ratio >= 0.7) stars = 2;
+    else if (ratio >= 0.6) stars = 1;
+
+    if (passed) {
+      const key = getKey();
+      if (!state.progress[key]) state.progress[key] = { completed: [], stars: {} };
+      const data = state.progress[key];
+      if (!data.completed.includes(g.level)) data.completed.push(g.level);
+      if (!data.stars[g.level] || stars > data.stars[g.level]) data.stars[g.level] = stars;
+      saveProgress();
+    }
+  }
   showScreen('screenLevels');
+  renderLevels();
+  updateSubjectProgress();
 }
 
 // ============================================================
