@@ -1170,7 +1170,7 @@ function finishLevel() {
   if (g.finished) return;
   g.finished = true;
   const total = g.questions.length;
-  const passed = g.correctCount >= Math.ceil(total * 0.6); // 60% to pass
+  const passed = g.correctCount >= total; // 全部答对才通关
   const ratio = g.correctCount / total;
   let stars = 0;
   if (ratio >= 0.9) stars = 3;
@@ -1249,7 +1249,7 @@ function retryLevel() {
 function goNextLevel() {
   document.getElementById('modalOverlay').classList.remove('show');
   const g = gameState;
-  const passed = g.correctCount >= Math.ceil(g.questions.length * 0.6);
+  const passed = g.correctCount >= g.questions.length; // 全部答对才通关
   if (passed && g.level < 20) {
     startLevel(g.level + 1);
   } else if (passed && g.level >= 20) {
@@ -1286,7 +1286,7 @@ function doQuit() {
   if (g && g.answers && g.answers.some(a => a !== undefined)) {
     const total = g.questions.length;
     const correctCount = g.correctCount || g.answers.filter(a => a && a.isCorrect).length;
-    const passed = correctCount >= Math.ceil(total * 0.6);
+    const passed = correctCount >= total; // 全部答对才通关
     const ratio = correctCount / total;
     let stars = 0;
     if (ratio >= 0.9) stars = 3;
