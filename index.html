@@ -852,7 +852,8 @@ function updateSubjectProgress() {
   subjects.forEach(sub => {
     const data = state.progress[`${state.grade}-${sub.id}`];
     const stars = data ? Object.values(data.stars).reduce((a,b)=>a+b, 0) : 0;
-    document.getElementById(sub.id+'Stars').textContent = '⭐ ' + stars;
+    const el = document.getElementById(sub.id + 'Stars');
+    if (el) el.textContent = '⭐ ' + stars;
   });
   let totalDone = 0, totalStars = 0;
   subjects.forEach(sub => {
@@ -863,8 +864,10 @@ function updateSubjectProgress() {
     }
   });
   const totalLevels = subjects.length * 20;
-  document.getElementById('totalProgressDisplay').textContent =
-    `📊 ${state.grade}年级 | 已通关 ${totalDone}/${totalLevels} 关 | ⭐ ${totalStars}`;
+  const totalEl = document.getElementById('totalProgressDisplay');
+  if (totalEl) {
+    totalEl.textContent = `📊 ${state.grade}年级 | 已通关 ${totalDone}/${totalLevels} 关 | ⭐ ${totalStars}`;
+  }
 }
 
 function selectSubject(subj) {
