@@ -400,8 +400,16 @@
       <p>选择你的年级，开始挑战吧！</p>
     </div>
     <div class="grade-grid">
-      <div class="grade-card" onclick="selectGrade(2)">
+      <div class="grade-card" onclick="selectGrade(1)">
         <span class="gicon">🐣</span>
+        <div class="ginfo">
+          <h2>一年级</h2>
+          <p>语文 · 数学 共 40 关</p>
+        </div>
+        <span class="arrow">›</span>
+      </div>
+      <div class="grade-card" onclick="selectGrade(2)">
+        <span class="gicon">🐰</span>
         <div class="ginfo">
           <h2>二年级</h2>
           <p>语文 · 数学 共 40 关</p>
@@ -512,6 +520,10 @@
 // ============================================================
 const LABELS = ['A', 'B', 'C', 'D'];
 const SUBJECTS_BY_GRADE = {
+  1: [
+    { id: 'chinese', icon: '📜', name: '语文' },
+    { id: 'math', icon: '🧮', name: '数学' },
+  ],
   2: [
     { id: 'chinese', icon: '📜', name: '语文' },
     { id: 'math', icon: '🧮', name: '数学' },
@@ -525,6 +537,76 @@ const SUBJECTS_BY_GRADE = {
 const SUBJECT_NAMES = { chinese:'语文', math:'数学', english:'英语' };
 const SUBJECT_ICONS = { chinese:'❓', math:'❓', english:'❓' };
 const QUESTIONS_PER_LEVEL = 6;
+
+// -------- 一年级 语文 --------
+function genGrade1Chinese(level) {
+  const pool = [
+    // L1-5: 拼音识字
+    ...[{q:'"māma"对应的词语是？',o:['妈妈','爸爸','哥哥','姐姐'],a:0,e:'māma（第一声+轻声）= 妈妈'},{q:'"bàba"对应的词语是？',o:['爸爸','妈妈','爷爷','奶奶'],a:0,e:'bàba（第四声+轻声）= 爸爸'},{q:'"tài yáng"指的是？',o:['太阳','月亮','星星','白云'],a:0,e:'太阳 tài yáng，每天都能看到它。'},{q:'"dà"字有几画？',o:['3画','2画','4画','5画'],a:0,e:'"大"字：横、撇、捺，共3画。'},{q:'"小"字的第一笔是？',o:['竖钩','横','撇','点'],a:0,e:'"小"字先写竖钩，再写左右两点。'},{q:'"人"字像什么？',o:['一个人站着','一朵花','一棵树','一座山'],a:0,e:'"人"字就像一个人站立的样子。'},{q:'"上"字表示什么方向？',o:['上面','下面','左面','右面'],a:0,e:'"上"指位置在高处。'},{q:'"下"的反义词是？',o:['上','大','多','长'],a:0,e:'上 ↔ 下，意思相反的词叫反义词。'},{q:'"一"字有几画？',o:['1画','2画','3画','4画'],a:0,e:'"一"只有一横，共1画。'},{q:'"口"字像什么？',o:['人的嘴巴','一朵花','一个球','一扇门'],a:0,e:'"口"字像张开的嘴巴形状。'},{q:'"山"字的拼音是？',o:['shān','sān','shàn','sǎn'],a:0,e:'山 shān，如"大山""山上"。'},{q:'"水"字共有几画？',o:['4画','3画','5画','6画'],a:0,e:'"水"字：竖钩、横撇、撇、捺，共4画。'}],
+
+    // L6-10: 词语认知
+    ...[{q:'"大"的反义词是？',o:['小','多','长','高'],a:0,e:'大和小是反义词，意思相反。'},{q:'"多"的反义词是？',o:['少','大','小','长'],a:0,e:'多和少是意思相反的词。'},{q:'"开心"的意思是什么？',o:['高兴','难过','生气','害怕'],a:0,e:'开心就是高兴、快乐的意思。'},{q:'下列哪个是水果？',o:['苹果','白菜','大米','牛奶'],a:0,e:'苹果是水果，可以直接生吃。'},{q:'"花朵"指的是什么？',o:['花朵（花儿）','小草','树叶','石头'],a:0,e:'花朵就是花儿，有各种美丽的颜色。'},{q:'"白天"过后是什么？',o:['晚上','中午','早上','下午'],a:0,e:'白天 → 晚上，一天有白天和黑夜。'},{q:'"春天"是什么季节？',o:['温暖的季节','寒冷的季节','炎热的季节','凉爽的季节'],a:0,e:'春天天气变暖，花儿开放。'},{q:'下列哪个是动物？',o:['小狗','苹果','桌子','铅笔'],a:0,e:'小狗是动物，其他都是物品。'},{q:'"车"字可以组成什么词？',o:['汽车','车车','车大','车子子'],a:0,e:'常见的词是"汽车"。'},{q:'"花"字表示什么？',o:['植物开的花','石头','动物','水'],a:0,e:'"花"是植物开出的花朵。'},{q:'"老师"是做什么的？',o:['教学生知识','看病','做饭','开车'],a:0,e:'老师在学校教学生知识。'},{q:'"学校"是做什么的地方？',o:['学习的地方','睡觉的地方','吃饭的地方','玩的地方'],a:0,e:'学校是学习和上课的地方。'}],
+
+    // L11-15: 简单句子
+    ...[{q:'"我爱爸爸妈妈。"中"爱"表示？',o:['喜欢、爱','讨厌','害怕','生气'],a:0,e:'"爱"就是喜欢、关爱的意思。'},{q:'"小鸟在树上唱歌。"谁在唱歌？',o:['小鸟','树','花','风'],a:0,e:'这句话说的是小鸟在树上唱歌。'},{q:'"我去上学。"中有几个字？',o:['4个','3个','5个','6个'],a:0,e:'"我去上学。"有4个字：我、去、上、学。'},{q:'"一二三四五"中第三个数是？',o:['三','二','四','五'],a:0,e:'一、二、三、四、五，第三个数是三。'},{q:'"早上"是每天的什么时候？',o:['起床的时候','睡觉的时候','吃饭的时候','玩的时候'],a:0,e:'早上是每天起床和吃早饭的时间。'},{q:'"请你坐下。"中的"坐"是什么动作？',o:['坐下','站起来','跑','跳'],a:0,e:'"坐"就是坐在椅子上的动作。'},{q:'"红红的太阳"是什么颜色？',o:['红色','蓝色','绿色','黄色'],a:0,e:'红红的太阳描述太阳是红色的。'},{q:'"好朋友"的意思是？',o:['关系好的朋友','不认识的人','老师','家人'],a:0,e:'好朋友就是关系很好的朋友。'},{q:'"月亮在天上。"月亮在哪里？',o:['天上','地上','水里','树上'],a:0,e:'月亮挂在天上，晚上才能看到。'},{q:'"吃饭了"中"吃"是什么动作？',o:['把食物放进嘴里','走路','睡觉','喝水'],a:0,e:'"吃"是把食物放到嘴里的动作。'},{q:'"谢谢你"是表示？',o:['感谢','生气','难过','命令'],a:0,e:'"谢谢你"是表达感谢的礼貌用语。'},{q:'"对不起"是表示？',o:['道歉','感谢','问好','再见'],a:0,e:'"对不起"是做错事时的道歉用语。'}],
+
+    // L16-20: 综合
+    ...[{q:'"天"字的拼音是？',o:['tiān','tān','tián','diān'],a:0,e:'天 tiān，如"天空""今天"。'},{q:'"地"字的拼音是？',o:['dì','bì','pì','qì'],a:0,e:'地 dì，如"大地""草地"。'},{q:'"月"字像什么？',o:['弯弯的月亮','圆圆的太阳','闪闪的星星','白白的云'],a:0,e:'"月"字像弯弯的月亮形状。'},{q:'"水"可以做什么？',o:['喝和洗','吃','玩','看'],a:0,e:'水可以喝，也可以洗手洗脸。'},{q:'"小朋友"指的是？',o:['小孩子','大人','老人','老师'],a:0,e:'小朋友指年龄小的孩子。'},{q:'"耳朵"是用来做什么的？',o:['听声音','看东西','闻味道','走路'],a:0,e:'耳朵是听觉器官，用来听声音。'},{q:'"眼睛"是用来做什么的？',o:['看东西','听声音','说话','跑步'],a:0,e:'眼睛是视觉器官，用来看东西。'},{q:'"花猫"是什么？',o:['一种猫','一种花','一种树','一种鸟'],a:0,e:'花猫是指身上有花纹的猫。'},{q:'"今天"的意思是什么？',o:['现在这一天','昨天','明天','后天'],a:0,e:'"今天"就是现在正在过的这一天。'},{q:'"好朋友一起玩。"说明了什么？',o:['朋友一起游戏','一个人玩','不喜欢朋友','吵架'],a:0,e:'好朋友在一起开心地玩耍。'},{q:'"大熊猫"是什么颜色的？',o:['黑白相间','全是黑色','全是白色','棕色'],a:0,e:'大熊猫身体是白色，四肢和眼圈是黑色的。'},{q:'"五星红旗"是什么颜色？',o:['红色和黄色','红色和蓝色','红色和绿色','蓝色和白色'],a:0,e:'五星红旗是红色的旗面，上面有五颗黄色的五角星。'}],
+  ];
+  return getBatch(pool, level, QUESTIONS_PER_LEVEL);
+}
+
+// -------- 一年级 数学 --------
+function genGrade1Math(level) {
+  const qs = [];
+  let maxNum;
+  if (level <= 7) { maxNum = 10; }
+  else if (level <= 14) { maxNum = 20; }
+  else { maxNum = 20; }
+
+  for (let i = 0; i < QUESTIONS_PER_LEVEL; i++) {
+    let op = Math.random() > 0.5 ? '+' : '-';
+    let a, b, answer, display, expl;
+    const isWordProblem = (i === 0 || i === 3) && level > 2;
+
+    if (isWordProblem) {
+      if (op === '+') {
+        const c1 = rand(1, maxNum > 15 ? 5 : 3);
+        const c2 = rand(1, Math.min(5, maxNum - c1));
+        answer = c1 + c2;
+        if (maxNum <= 10) {
+          display = `树上有 ${c1} 只小鸟，又飞来 ${c2} 只，一共几只？`;
+        } else {
+          display = `小明有 ${c1} 个苹果，妈妈又给了 ${c2} 个，一共几个？`;
+        }
+        expl = `${c1} + ${c2} = ${answer}`;
+      } else {
+        const total = rand(maxNum > 15 ? 4 : 3, Math.min(maxNum, 10));
+        const taken = rand(1, total - 1);
+        answer = total - taken;
+        if (maxNum <= 10) {
+          display = `盘子里有 ${total} 颗糖，吃了 ${taken} 颗，还剩几颗？`;
+        } else {
+          display = `小红有 ${total} 支铅笔，用了 ${taken} 支，还剩几支？`;
+        }
+        expl = `${total} - ${taken} = ${answer}`;
+      }
+    } else {
+      if (op === '+') {
+        a = rand(1, maxNum - 1); b = rand(1, maxNum - a);
+        answer = a + b; display = `${a} + ${b} = ?`;
+        expl = `${a} + ${b} = ${answer}`;
+      } else {
+        a = rand(2, maxNum); b = rand(1, a);
+        answer = a - b; display = `${a} - ${b} = ?`;
+        expl = `${a} - ${b} = ${answer}`;
+      }
+    }
+    const { opts, ansIdx } = generateOptions(answer);
+    qs.push({ q: display, o: opts, a: ansIdx, e: expl });
+  }
+  return qs;
+}
 
 // -------- 二年级 语文 --------
 function genGrade2Chinese(level) {
@@ -553,8 +635,8 @@ function genGrade2Math(level) {
   let maxNum, ops;
   if (level <= 5) { maxNum = 20; ops = ['+','-']; }
   else if (level <= 10) { maxNum = 50; ops = ['+','-']; }
-  else if (level <= 15) { maxNum = 100; ops = ['+','-','×']; }
-  else { maxNum = 100; ops = ['+','-','×','÷']; }
+  else if (level <= 15) { maxNum = 100; ops = ['+','-']; }
+  else { maxNum = 100; ops = ['+','-']; }
 
   for (let i = 0; i < QUESTIONS_PER_LEVEL; i++) {
     let op = ops[Math.floor(Math.random() * ops.length)];
@@ -563,18 +645,10 @@ function genGrade2Math(level) {
       a = rand(1, maxNum-1); b = rand(1, maxNum - a);
       answer = a + b; display = `${a} + ${b} = ?`;
       expl = `${a} + ${b} = ${answer}`;
-    } else if (op === '-') {
+    } else {
       a = rand(2, maxNum); b = rand(1, a);
       answer = a - b; display = `${a} - ${b} = ?`;
       expl = `${a} - ${b} = ${answer}`;
-    } else if (op === '×') {
-      a = rand(2, 9); b = rand(2, 9);
-      answer = a * b; display = `${a} × ${b} = ?`;
-      expl = `${a} × ${b} = ${answer}`;
-    } else {
-      b = rand(2, 9); answer = rand(1, 9); a = b * answer;
-      display = `${a} ÷ ${b} = ?`;
-      expl = `${a} ÷ ${b} = ${answer}（即 ${b} × ${answer} = ${a}）`;
     }
     const { opts, ansIdx } = generateOptions(answer);
     qs.push({ q: display, o: opts, a: ansIdx, e: expl });
@@ -770,10 +844,10 @@ function generateOptions(answer) {
 }
 
 function getBatch(pool, level, count) {
-  // 对每个关卡，使用不同的偏移起始位置
-  const start = ((level-1) * count) % Math.max(1, pool.length - count + 1);
-  const idx = Math.min(start, Math.max(0, pool.length - count));
-  return pool.slice(idx, idx + count).map(q => {
+  // 随机打乱后选前 count 道题，保证每次进入关卡题目不同
+  const shuffled = shuffle([...pool]);
+  const selected = shuffled.slice(0, Math.min(count, shuffled.length));
+  return selected.map(q => {
     const indices = [0, 1, 2, 3];
     shuffle(indices);
     const opts = indices.map(i => q.o[i]);
@@ -961,7 +1035,10 @@ function startLevel(lvl) {
 }
 
 function generateQuestions(grade, subject, level) {
-  if (grade === 2) {
+  if (grade === 1) {
+    if (subject === 'chinese') return genGrade1Chinese(level);
+    if (subject === 'math') return genGrade1Math(level);
+  } else if (grade === 2) {
     if (subject === 'chinese') return genGrade2Chinese(level);
     if (subject === 'math') return genGrade2Math(level);
   } else {
